@@ -1,0 +1,18 @@
+# Engagement notes, unpublished findings and local lists never leave the machine.
+private/
+*.log
+
+# Key material, in any form.
+*.pem
+*.key
+*.seed
+*.p12
+*.pfx
+.env
+.env.*
+
+# Build output and editor files.
+__pycache__/
+*.pyc
+.DS_Store
+target/
