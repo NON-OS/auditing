@@ -98,7 +98,7 @@ class ValidateFindings(unittest.TestCase):
         self.assertTrue(self.check(doc)[1])
 
     def test_repository_has_no_problems(self):
-        count, problems = vf.check(REPO, TODAY)
+        count, problems = vf.check(REPO, datetime.date.today())
         self.assertEqual(problems, [])
 
 

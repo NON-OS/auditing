@@ -99,11 +99,10 @@ def write(doc, root=ROOT, update=False):
 
 
 def message(doc, update=False):
+    import textwrap
     verb = "Update" if update else "Publish"
-    title = f"{verb} {doc['id']}: {doc['title']}"
-    if len(title) > 72:
-        title = title[:71].rstrip().rstrip(".")
-    lines = [title, "", f"Severity {doc['severity']}, status {doc['status']}."]
+    subject = f"{verb} {doc['id']}, {doc['severity']} severity"
+    lines = [subject, ""] + textwrap.wrap(doc["title"], 72) + ["", f"Status {doc['status']}."]
     if doc["status"] == "fixed":
         lines.append(f"Fixed in kernel commit {doc['fix']['commit']}.")
     elif doc["status"] == "open":
