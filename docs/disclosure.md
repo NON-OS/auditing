@@ -25,7 +25,7 @@ The audit publishes every finding it confirms, in full, on the day it is confirm
 
 The audit is first-party, so the party that decides what is published is the party being audited. Publishing at confirmation takes that decision out of the maintainers' hands. No finding can be delayed, softened or dropped, and the public record shows how long each one stayed open. [`scripts/publish_finding.py`](../scripts/publish_finding.py) is the only way a finding enters this repository, and [`scripts/render_findings.py`](../scripts/render_findings.py) writes the readable pages and the index from the JSON.
 
-### What it costs
+### What it risks
 
 An open finding is readable by anyone, including people who would use it. The audit publishes anyway and accepts that cost knowingly. It is the reason steps 2 and 3 exist: a candidate that has not been reproduced and has not survived a second reviewer is not published, so the record holds findings and not guesses.
 

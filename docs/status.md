@@ -10,7 +10,7 @@ The audit moved from preparation to running on this date. In order:
 2. The commit checks were added. Hooks and CI now refuse chat and session identifiers, keys, tokens, the addresses of real hosts and commit messages that break the rules, over the whole history.
 3. The two targets were resolved to full commit hashes and recorded.
 4. The first measurements were taken: the code metrics and the citation check on the kernel's own documentation (the result is below).
-5. The cloud environment was set up. Claude runs in sandboxes that hold no keys and cannot push. Every run has a cost cap, the account has a monthly limit, and an alert goes out at half of it. Notes go to a private store.
+5. The cloud environment was set up. Claude runs in sandboxes that hold no keys and cannot push. Notes go to a private store.
 6. A lead, a refuter and a worker were deployed, each as its own agent. The lead and the refuter ran once, against an empty store, and behaved as designed.
 7. The first workstream, WS3 (syscall layer and capabilities), ran twice against the release. It read the syscall layer, cross-checked the 196 syscall numbers against the registry, built a table of which capsule holds which capability, and ran the project's own host tests, 2,167 of them, which all passed. That pass is a baseline and not a result of this audit.
 8. The workers wrote candidates. Every one is a hypothesis and none is a finding. They stay private until one is reproduced and survives the second reviewer, and then it is published as a finding.

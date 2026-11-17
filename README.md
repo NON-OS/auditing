@@ -23,7 +23,7 @@ Claude does the reading, the tool runs and the first write-up. People decide wha
 
 ## Who does what
 
-![Cloud sandbox, private store, maintainer and public repository, with the hard limits and what never goes public](docs/media/diagram-audit-roles.svg)
+![Cloud sandbox, private store, maintainer and public repository, with how the sandboxes are isolated and what stays private](docs/media/diagram-audit-roles.svg)
 
 ## What happens to a suspicion
 
@@ -51,7 +51,6 @@ Every confirmed finding is published here in full, with its evidence, the day it
 | [`claims/`](claims/README.md) | The claims register |
 | [`findings/`](findings/README.md) | The finding schema, the template and the published findings |
 | [`reports/`](reports/README.md) | Published reports |
-| [`routines/`](routines/README.md) | The prompts that run the audit in cloud environments |
 | [`scripts/`](scripts/) | The checks, the measurements and the script that publishes a fixed finding, with tests in [`tests/`](tests/) |
 | [`targets/`](targets/targets.toml) | The audited tag and branch, and the commit the docs were last verified against |
 
@@ -66,4 +65,4 @@ make citations KERNEL_DIR=../microkernel   # every kernel: citation resolves in 
 
 ## Licenses
 
-Code (`scripts/`, `tests/`, `routines/`, `.github/`, `Makefile`, the finding schema) is [Apache-2.0](LICENSE). Writing and data (`docs/`, `checklists/`, `claims/`, `findings/`, `reports/`, this file) are [CC BY 4.0](LICENSE-docs). Use any of it, in your own audits too, with attribution.
+Code (`scripts/`, `tests/`, `.github/`, `Makefile`, the finding schema) is [Apache-2.0](LICENSE). Writing and data (`docs/`, `checklists/`, `claims/`, `findings/`, `reports/`, this file) are [CC BY 4.0](LICENSE-docs). Use any of it, in your own audits too, with attribution.

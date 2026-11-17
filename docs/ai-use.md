@@ -1,6 +1,6 @@
 # AI assistance
 
-Parts of this audit are done by Claude, an AI model made by Anthropic. This page says what it does, what it never decides, where it runs and what it costs, so that a reader can weigh the work.
+Parts of this audit are done by Claude, an AI model made by Anthropic. This page says what it does, what it never decides and where it runs, so that a reader can weigh the work.
 
 ## What the assistant does
 
@@ -25,21 +25,18 @@ Parts of this audit are done by Claude, an AI model made by Anthropic. This page
 - The refutation step is a separate run that sees only the claim, the commit and the evidence, so it cannot be anchored by the first run's reasoning.
 - Each report states how many candidates were dropped.
 
-## Where it runs and who pays
+## Where it runs
 
-NØNOS is a member of Anthropic's Claude Startups program. The audit uses Claude in two ways:
+NØNOS is part of Anthropic's Claude Startups program, and the audit runs with the support of that program. Claude works as agents in isolated cloud sandboxes. The sandboxes hold no keys, reach only the code hosts and package mirrors the build needs, and cannot push to any repository. Notes and candidates stay in a private store until a finding is confirmed.
 
-- Local sessions on the auditor's machine, billed through the Claude API against the program's API credits.
-- Scheduled cloud routines, which count against the usage limits of NØNOS's Claude Team plan. The prompts they run are in [`routines/`](../routines/README.md), so the instructions given to the assistant are public.
-
-Anthropic has no say in what the audit examines, finds or publishes, and has not reviewed or endorsed it. A provider that also funds part of the work is a relationship a reader should know about, so it is stated here.
+Anthropic has no say in what the audit examines, finds or publishes, and has not reviewed or endorsed it. A provider that also supports part of the work is a relationship a reader should know about, so it is stated here.
 
 ## Known limits
 
 - It can state something false with confidence, including a file, a line or a function that does not exist. That is the reason for the citation check.
 - It leans toward the likely answer and can miss an unusual bug that a person with a specific idea would find.
 - It can be wrong about what code does at run time. A claim without a reproduction stays "supported".
-- A routine starts each run with no memory. Continuity lives in the private notes, so a gap in the notes is a gap in the work.
+- Each run starts with no memory. Continuity lives in the private notes, so a gap in the notes is a gap in the work.
 
 ## Credit
 
