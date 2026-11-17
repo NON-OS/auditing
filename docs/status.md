@@ -28,7 +28,7 @@ The audit moved from preparation to running on this date. In order:
 | Tooling: citation, claims, finding, leak and commit checks, code metrics | | Dynamic testing and fuzzing |
 | The cloud environment, the lead, the refuter and the worker | | |
 
-No finding has been published.
+One finding is published: [NKA-2026-006](../findings/published/NKA-2026-006.md), open. It is the only one reproduced so far. Other candidates stay private until they are reproduced.
 
 ## First measured result: the project's docs drift from its code
 

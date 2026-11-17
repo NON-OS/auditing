@@ -23,6 +23,8 @@ The finding schema, the template and every published finding. A finding is publi
 
 `make check` applies them.
 
+Finding ids are assigned when a finding is written. A gap in the published ids is a finding that is held back until it has been reproduced, and it is published with its own id when it is.
+
 ## Identifiers
 
 `NKA-<year>-<number>`, for example `NKA-2026-001`. The number is allocated when a candidate becomes a finding and is never reused, including for a finding that is later withdrawn.
