@@ -27,12 +27,12 @@ Parts of this audit are done by Claude, an AI model made by Anthropic. This page
 
 ## Where it runs and who pays
 
-The audit uses Claude in two ways, both paid for by NØNOS through its Claude Team plan:
+NØNOS is a member of Anthropic's Claude Startups program. The audit uses Claude in two ways:
 
-- Local sessions on the auditor's machine, billed through the Claude API against the plan's monthly API credit.
-- Scheduled cloud routines, which count against the plan's usage limits. The prompts they run are in [`routines/`](../routines/README.md), so the instructions given to the assistant are public.
+- Local sessions on the auditor's machine, billed through the Claude API against the program's API credits.
+- Scheduled cloud routines, which count against the usage limits of NØNOS's Claude Team plan. The prompts they run are in [`routines/`](../routines/README.md), so the instructions given to the assistant are public.
 
-Anthropic has no say in what the audit examines, finds or publishes, and has not reviewed or endorsed it. A provider that also supplies the tool is a relationship a reader should know about, so it is stated here.
+Anthropic has no say in what the audit examines, finds or publishes, and has not reviewed or endorsed it. A provider that also funds part of the work is a relationship a reader should know about, so it is stated here.
 
 ## Known limits
 
