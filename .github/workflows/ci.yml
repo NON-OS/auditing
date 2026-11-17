@@ -1,0 +1,55 @@
+# SPDX-License-Identifier: Apache-2.0
+# Runs the checks that keep this repository honest: the writing rules, the links, the finding
+# schema and the disclosure policy, the leak guard and the tests. Python standard library only.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: ci-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    name: make check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Python version
+        run: python3 --version
+      - name: Checks and tests
+        run: make check
+
+  citations:
+    name: citations resolve in the kernel
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4.2.2
+        with:
+          persist-credentials: false
+          path: audit
+      - name: Commit the docs were last verified against
+        id: pin
+        run: echo "commit=$(tr -d '[:space:]' < audit/targets/verified-at.txt)" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4.2.2
+        with:
+          persist-credentials: false
+          repository: NON-OS/microkernel
+          ref: ${{ steps.pin.outputs.commit }}
+          path: kernel
+      - name: Check every kernel citation
+        run: python3 audit/scripts/check_citations.py ours kernel

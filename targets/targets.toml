@@ -1,0 +1,16 @@
+# The targets of an engagement, as names. The hashes are resolved when the engagement starts
+# (scripts/resolve_targets.py) and written to reports/<id>/targets.lock.json, so a report always
+# cites commits and never names that can move.
+
+[repository]
+url = "https://github.com/NON-OS/microkernel.git"
+
+[[target]]
+name = "release"
+kind = "tag"
+ref = "v0.9.3.5"
+
+[[target]]
+name = "main"
+kind = "branch"
+ref = "main"
