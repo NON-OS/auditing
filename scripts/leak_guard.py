@@ -10,6 +10,8 @@ It checks for:
 - a public IPv4 address, which would identify a real host (reserved, private and documentation
   ranges are allowed, and scripts/ipv4_allow.txt can allow a specific address);
 - a home directory path that names a person;
+- an identifier of a chat, a session, an agent, a deployment or a memory store of any AI service, a link
+  to one, or a transcript path, because those tie the repository to a private account;
 - any term listed in private/banned.txt, a local file that is never committed. Put real hostnames,
   usernames and similar terms there on the machine that runs the audit.
 
@@ -26,7 +28,20 @@ SKIP_DIRS = {".git", "private"}
 KEY_NAMES = re.compile(r"\.(pem|key|seed|p12|pfx|jks|keystore)$|^\.env(\..*)?$|signing_key", re.I)
 ALLOWED_FINDINGS = ("findings/schema/", "findings/published/", "findings/README.md", "findings/TEMPLATE.md")
 
+ID_PREFIXES = "sesn|agent|memstore|env|depl|vlt|vault|wfrun|file|msgbatch"
+UUID = r"\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"
+
 PATTERNS = [
+    ("session, agent or deployment identifier", re.compile(
+        r"\b(?:" + ID_PREFIXES + r")_(?=[A-Za-z]*[0-9])[0-9A-Za-z]{20,}\b")),
+    ("link to a chat, session or console page", re.compile(
+        r"claude\.ai/(?:chat|code|share|artifact|project)/[0-9A-Za-z-]{8,}"
+        r"|platform\.claude\.com/(?:workspaces|settings|organizations)/\S*[0-9A-Za-z_-]{12,}"
+        r"|chatgpt\.com/(?:c|share)/[0-9A-Za-z-]{8,}")),
+    ("session or transcript field", re.compile(
+        r"origin" r"SessionId|\"sessionId\"|\bsession_id\s*[:=]|\.claude" r"/projects/|\.json" r"l\b.{0,20}transcript")),
+    ("UUID next to a session, chat or conversation", re.compile(
+        r"(?i)(?:session|chat|conversation|thread)\b[^\n]{0,40}" + UUID)),
     ("private key block", re.compile(r"-----BEGIN (?:[A-Z]+ )?PRIVATE KEY-----")),
     ("GitHub token", re.compile(r"\b(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{30,}\b|\bgithub_pat_[A-Za-z0-9_]{40,}\b")),
     ("AWS access key id", re.compile(r"\bAKIA[0-9A-Z]{16}\b")),

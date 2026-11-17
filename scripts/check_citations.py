@@ -35,7 +35,8 @@ SKIP_DIRS = {".git", "private"}
 def line_count(path, cache):
     if path not in cache:
         try:
-            cache[path] = sum(1 for _ in path.open("rb"))
+            with path.open("rb") as fh:
+                cache[path] = sum(1 for _ in fh)
         except OSError:
             cache[path] = 0
     return cache[path]

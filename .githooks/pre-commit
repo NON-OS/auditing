@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: Apache-2.0
+# Stops a commit that would put something private in the repository. Enable it with: make hooks
+set -euo pipefail
+root="$(git rev-parse --show-toplevel)"
+exec python3 "$root/scripts/leak_guard.py" "$root"

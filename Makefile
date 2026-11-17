@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 PYTHON ?= python3
 
-.PHONY: check citations style links findings claims leaks test
-check: style links findings claims leaks test
+.PHONY: check citations style links findings claims leaks history hooks test
+check: style links findings claims leaks history test
 
 style:
 	$(PYTHON) scripts/style_check.py
@@ -18,6 +18,13 @@ claims:
 
 leaks:
 	$(PYTHON) scripts/leak_guard.py
+
+history:
+	$(PYTHON) scripts/check_commit_msg.py --range HEAD
+
+# Turn on the commit hooks in this clone.
+hooks:
+	git config core.hooksPath .githooks
 
 test:
 	$(PYTHON) -m unittest discover -s tests -p 'test_*.py'

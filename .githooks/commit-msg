@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: Apache-2.0
+# Checks the commit message against the repository's rules. Enable it with: make hooks
+set -euo pipefail
+root="$(git rev-parse --show-toplevel)"
+exec python3 "$root/scripts/check_commit_msg.py" "$1"
