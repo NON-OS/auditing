@@ -1,0 +1,45 @@
+{
+  "id": "NKA-2026-006",
+  "title": "Rollback floor counter and base are held with empty authorisation, so a local TPM user can raise it, reset it or squat the base",
+  "component": "bootloader rollback floor (tpm_nv), kernel TPM floor read",
+  "severity": "low",
+  "confidence": "confirmed",
+  "adversary": "A3",
+  "preconditions": [
+    "Access to the TPM command interface with the default empty owner and index authorisation, for example by booting another operating system from removable media",
+    "Firmware boot access to the machine"
+  ],
+  "affected": {
+    "release": true,
+    "main": false,
+    "commits": [
+      "b3dd1fa37ce2e32e3cb2f6a462081fefede4df40"
+    ]
+  },
+  "location": "kernel:nonos-bootloader/src/security/tpm_nv/consts.rs:22-26; kernel:nonos-bootloader/src/security/tpm_nv/floor_cmd.rs:25-46; kernel:nonos-bootloader/src/security/tpm_nv/floor_seq.rs:64-100; kernel:src/security/tpm/boot_reads/floor.rs:60-66",
+  "cvss": "CVSS:4.0/AV:P/AC:L/AT:N/PR:N/UI:N/VC:N/VI:L/VA:L/SC:N/SI:N/SA:N",
+  "description": "The rollback counter at NV index 0x01000020 is defined with attributes 0x02040014 and an empty index authorisation, so anyone who can send TPM commands can call TPM2_NV_Increment on it and raise the floor. The base at 0x01000021 is defined under the owner hierarchy with an empty owner password and without a delete policy, so the same party can undefine it. After that the loader recreates the base from the counter and the floor restarts at 0, or an attacker can define the base first with a value of their choosing. The project documents that anyone who can delete the base resets the floor. It does not state that with empty owner authorisation this means any local TPM user, and the header comment in floor_seq.rs says only the owner can reset it. Main was not checked.",
+  "impact": "Integrity of the rollback floor and availability of boot. Raising the counter makes the loader refuse every kernel whose rollback index is below the new floor until the base is undefined. Resetting the floor removes the protection against older signed kernels. Today every release has rollback index 1 and no lower-index signed kernel exists, so the reset has no effect on current releases. It matters after a future security release raises the index.",
+  "scenario": [
+    "The attacker boots another operating system from removable media on the machine.",
+    "The attacker undefines the base index with the empty owner password. The next NØNOS boot sets a new base equal to the counter and the floor is 0.",
+    "Or the attacker calls TPM2_NV_Increment on the counter with the empty index password, five times in the test, raising the floor above the rollback index of every shipped kernel so that all of them are refused.",
+    "Or, after undefining the base, the attacker defines it first with a value they choose, which the loader accepts without logging that a base was set."
+  ],
+  "evidence": {
+    "reproduced": true,
+    "steps": [
+      "The loader's own tpm_nv code (consts, floor_cmd, floor_seq) was compiled into a test harness and run against swtpm 0.7.3, started with startup-clear, by the worker and again independently by the refuter with identical output.",
+      "Printed: the counter and base read back as expected, a direct write to the locked base was refused with 0x148, an owner NV_UndefineSpace of the base succeeded with 0x0 and the floor read back as 0, five NV_Increment calls succeeded and the floor read back as 5, and a squatted base accepted later writes with index authorisation only.",
+      "Not run: a full boot under firmware. That the loader then refuses or admits a kernel is by code reading of floor.rs, floor_rule.rs and mode.rs. Main was not checked."
+    ],
+    "harness": "Host test binary that includes the three loader tpm_nv source files by path and talks to a software TPM over its socket interface."
+  },
+  "remediation": "Define the counter and the base with an authorisation policy that the owner or the measured boot state must satisfy, and give the base a delete policy so that undefining it is not possible with an empty password. Make the loader refuse to boot, with a clear message, when the base is missing after the first boot, instead of recreating it silently. Set the TPM owner authorisation during installation. Correct the header comment in floor_seq.rs and the limits paragraph in the rollback documentation so they state the empty-authorisation precondition.",
+  "regression_check": "Add the harness as a host test in the loader's tpm_nv code asserting that undefining the base and incrementing the counter both fail without the policy.",
+  "dates": {
+    "reported": "2026-11-17",
+    "published": "2026-11-17"
+  },
+  "status": "open"
+}
