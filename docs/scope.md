@@ -11,6 +11,8 @@ Both are resolved to full commit hashes at the start by `scripts/resolve_targets
 
 ## What is audited
 
+![The 14 workstreams in four groups](media/diagram-audit-scope.svg)
+
 | Area | Workstream | Checklist |
 |---|---|---|
 | Boot chain and trust anchor | WS1 | [ws01](../checklists/ws01-boot-chain.md) |

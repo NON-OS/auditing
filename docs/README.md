@@ -8,6 +8,8 @@
 
 ## How it is done
 
+![The audit loop: workers, a refuter, a lead, a fix by the maintainers, then the public record](media/diagram-audit-flow.svg)
+
 - [Method](method.md): phases, evidence, refutation, dynamic testing.
 - [Tools and pipeline](pipeline.md): what already runs in the project's CI, what the audit runs from the project's tree, and what it adds.
 - [Claims](claims.md): the register, the verdicts and the tests behind behavioural claims.

@@ -27,6 +27,8 @@ A finding needs a reproduction, or a complete chain from an attacker's capabilit
 
 ## Refutation
 
+![A candidate is refuted, needs more, or survives, is fixed by a person, and is published with the fix](media/diagram-candidate-life.svg)
+
 A candidate does not become a finding because the reviewer who found it believes it. A second reviewer, who has not seen the first reviewer's reasoning, is given the claim, the commit and the evidence file. They try to show that the code is unreachable by the stated adversary, that a precondition cannot hold, that an existing check already stops it, or that the evidence does not reproduce. A candidate that survives is a finding. One that fails is dropped, and the report states how many were dropped and why, so a reader can judge the false-positive rate.
 
 ## Dynamic testing

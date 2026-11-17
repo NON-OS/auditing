@@ -48,6 +48,8 @@ The project documents these in `kernel:docs/security/checking-the-claims.md`. Th
 
 ## How the work is run
 
+![Cloud sandbox, private store, maintainer and public repository, with the hard limits and what never goes public](media/diagram-audit-roles.svg)
+
 The audit is run by cloud routines, each working on one workstream and writing to a private repository. [`routines/`](../routines/README.md) has the prompts, the generator and the limits of that setup. Candidate findings go through the refutation step in [method.md](method.md) before anyone reads them as findings.
 
 ## Tools from outside
