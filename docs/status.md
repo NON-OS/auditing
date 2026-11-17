@@ -13,14 +13,16 @@ The audit moved from preparation to running on this date. In order:
 5. The cloud environment was set up. Claude runs in sandboxes that hold no keys and cannot push. Every run has a cost cap, the account has a monthly limit, and an alert goes out at half of it. Notes go to a private store.
 6. A lead, a refuter and a worker were deployed, each as its own agent. The lead and the refuter ran once, against an empty store, and behaved as designed.
 7. The first workstream, WS3 (syscall layer and capabilities), ran twice against the release. It read the syscall layer, cross-checked the 196 syscall numbers against the registry, built a table of which capsule holds which capability, and ran the project's own host tests, 2,167 of them, which all passed. That pass is a baseline and not a result of this audit.
-8. The workers wrote candidates. Every one is a hypothesis, none has been through the refuter, and none is a finding. They stay private until they are fixed.
+8. The workers wrote candidates. Every one is a hypothesis and none is a finding. They stay private until they are fixed.
+9. The refuter completed its first review of a WS3 candidate, working only from the claim and the evidence.
+10. All 14 workstreams were put on a schedule. Each worker runs every fourth day, the lead and the refuter run daily, and WS1 (the boot chain) was started the same day.
 
 ## Where the audit stands
 
 | Done | In progress | Not started |
 |---|---|---|
-| Scope, method, threat model, severity and disclosure rules | WS3, syscall layer and capabilities | The other 13 workstreams |
-| System model with every citation checked | Candidates from WS3, awaiting the refuter | Refutation of any candidate |
+| Scope, method, threat model, severity and disclosure rules | WS3, syscall layer and capabilities. WS1, the boot chain, started | The other 12 workstreams, which are scheduled |
+| System model with every citation checked | Refutation of the WS3 candidates, one reviewed so far | Refutation of candidates from other workstreams |
 | 14 workstream checklists | Running the project's own claim-checking tools on both targets | Verdicts on the claims |
 | Claims register seeded with 26 public claims, none yet verified | | Explainers |
 | Tooling: citation, claims, finding, leak and commit checks, code metrics | | Dynamic testing and fuzzing |
@@ -45,7 +47,7 @@ What this does and does not show. It is a documentation result, not a vulnerabil
 
 ## What is next
 
-1. Send the WS3 candidates to the refuter.
-2. Start the remaining workstreams one at a time, the riskiest first, and read what each produces before starting more.
+1. Finish refuting the WS3 candidates.
+2. Read what each newly started workstream produces before changing the schedule.
 3. Run the project's claim-checking tools on both targets and keep the output.
 4. Fix the stale citations in the project's documentation.
