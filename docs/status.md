@@ -1,37 +1,51 @@
 # Status
 
-As of 2026-11-17, against the kernel at `551bbd3470fe8f3334b1381f4ffbc096e229a08d` (`main`).
+As of 2026-11-17. The audit started today. Targets: the release `v0.9.3.5` at `b3dd1fa37ce2e32e3cb2f6a462081fefede4df40` and `main` at `551bbd3470fe8f3334b1381f4ffbc096e229a08d`.
+
+## What happened on 2026-11-17
+
+The audit moved from preparation to running on this date. In order:
+
+1. This repository was made public, with a clean history and its checks passing in CI.
+2. The commit checks were added. Hooks and CI now refuse chat and session identifiers, keys, tokens, the addresses of real hosts and commit messages that break the rules, over the whole history.
+3. The two targets were resolved to full commit hashes and recorded.
+4. The first measurements were taken: the code metrics and the citation check on the kernel's own documentation (the result is below).
+5. The cloud environment was set up. Claude runs in sandboxes that hold no keys and cannot push. Every run has a cost cap, the account has a monthly limit, and an alert goes out at half of it. Notes go to a private store.
+6. A lead, a refuter and a worker were deployed, each as its own agent. The lead and the refuter ran once, against an empty store, and behaved as designed.
+7. The first workstream, WS3 (syscall layer and capabilities), ran twice against the release. It read the syscall layer, cross-checked the 196 syscall numbers against the registry, built a table of which capsule holds which capability, and ran the project's own host tests, 2,167 of them, which all passed. That pass is a baseline and not a result of this audit.
+8. The workers wrote candidates. Every one is a hypothesis, none has been through the refuter, and none is a finding. They stay private until they are fixed.
 
 ## Where the audit stands
 
-Phase 0 is under way. The method, the tooling and the claims register are published. No workstream has started, and there are no findings.
+| Done | In progress | Not started |
+|---|---|---|
+| Scope, method, threat model, severity and disclosure rules | WS3, syscall layer and capabilities | The other 13 workstreams |
+| System model with every citation checked | Candidates from WS3, awaiting the refuter | Refutation of any candidate |
+| 14 workstream checklists | Running the project's own claim-checking tools on both targets | Verdicts on the claims |
+| Claims register seeded with 26 public claims, none yet verified | | Explainers |
+| Tooling: citation, claims, finding, leak and commit checks, code metrics | | Dynamic testing and fuzzing |
+| The cloud environment, the lead, the refuter and the worker | | |
 
-| Done | Not started |
-|---|---|
-| Scope, method, threat model, severity and disclosure rules | Review of any workstream |
-| System model with every citation checked | Dynamic testing and fuzzing |
-| 14 workstream checklists | Refutation of any candidate |
-| Claims register seeded with 26 public claims, none yet verified | Verdicts on the claims |
-| Tooling: citation, claims, finding and leak checks, code metrics | Explainers |
-| Routine prompts for the lead, the refuter and 14 workers | Running the project's own claim-checking tools on both targets |
+No finding has been published.
 
 ## First measured result: the project's docs drift from its code
 
-`scripts/check_citations.py kernel` checked every source location cited in the kernel's documentation against the tree at this commit:
+`scripts/check_citations.py kernel` checked every source location cited in the kernel's documentation:
 
-| | Count |
-|---|---|
-| Citations checked | 6,855 |
-| Citations that no longer resolve | 496 (7%) |
-| of which the file does not exist | 268 |
-| of which the cited lines lie outside the file | 228 |
+| | `main` | Release `v0.9.3.5` |
+|---|---|---|
+| Citations checked | 6,855 | 6,842 |
+| Citations that no longer resolve | 496 (7%) | 496 (7%) |
+| of which the file does not exist | 268 | 268 |
+| of which the cited lines lie outside the file | 228 | 228 |
 
-Of the 496, 124 are in the security, kernel and overview pages that carry the project's security claims. The capabilities pages cite `src/process/caps.rs` many times and that file does not exist at this commit.
+Of the 496, 124 are in the security, kernel and overview pages that carry the project's security claims. The capabilities pages cite `src/process/caps.rs` many times and that file does not exist at either commit.
 
 What this does and does not show. It is a documentation result, not a vulnerability: a stale citation does not make the code wrong. It does mean a reader following the docs cannot always find the code a claim rests on. Some citations may have been correct against an earlier commit. The check is mechanical, so a citation that resolves can still be wrong about what is at that line.
 
 ## What is next
 
-1. Resolve the release tag and `main` to hashes and record them.
-2. Run the project's claim-checking tools on both targets and keep the output.
-3. Start the lead, the refuter and two workstreams, and read what they produce before starting more.
+1. Send the WS3 candidates to the refuter.
+2. Start the remaining workstreams one at a time, the riskiest first, and read what each produces before starting more.
+3. Run the project's claim-checking tools on both targets and keep the output.
+4. Fix the stale citations in the project's documentation.
