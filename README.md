@@ -52,7 +52,7 @@ Every finding is published here, with its evidence, after the maintainers have f
 | [`findings/`](findings/README.md) | The finding schema, the template and the published findings |
 | [`reports/`](reports/README.md) | Published reports |
 | [`routines/`](routines/README.md) | The prompts that run the audit in cloud environments |
-| [`scripts/`](scripts/) | The checks and measurements, with tests in [`tests/`](tests/) |
+| [`scripts/`](scripts/) | The checks, the measurements and the script that publishes a fixed finding, with tests in [`tests/`](tests/) |
 | [`targets/`](targets/targets.toml) | The audited tag and branch, and the commit the docs were last verified against |
 
 ## Checks

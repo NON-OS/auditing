@@ -15,7 +15,7 @@ The project publishes no key for reports and commits to no response time and no 
 5. The maintainers fix it, accept the risk, or dispute it.
 6. The finding is published here only after step 5, in the form the schema describes.
 
-Nothing is published before step 5. `scripts/validate_findings.py` and `scripts/leak_guard.py` fail a change that adds an unpublished finding.
+Nothing is published before step 5. [`scripts/publish_finding.py`](../scripts/publish_finding.py) is the only way a finding enters this repository: it needs the maintainers' outcome, validates the finding against the schema and the policy above, refuses anything the leak guard rejects, and makes one commit that a person then pushes. `scripts/validate_findings.py` and `scripts/leak_guard.py` fail a change that adds an unpublished finding.
 
 ## Statuses of a published finding
 
