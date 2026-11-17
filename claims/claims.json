@@ -1,0 +1,380 @@
+{
+  "claims": [
+    {
+      "id": "C-001",
+      "category": "boot-trust",
+      "text": "NØNOS treats every program as untrusted until it is proved.",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "What exactly is proved: which statement, by whom, checked against which root?",
+        "Does the proof say anything about what the program does, or only that it is the enrolled program?"
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-002",
+      "category": "boot-trust",
+      "text": "A program that cannot prove what it is does not run.",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "Is there any path that starts a program without the proof check: boot-time capsules, the Linux personality, development profiles?"
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-003",
+      "category": "boot-trust",
+      "text": "Each capsule meets eleven checks at spawn, in order, and is refused at the first one it fails.",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "List the eleven checks with file and line.",
+        "Confirm the order and that no check can be skipped by any profile or feature."
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-004",
+      "category": "boot-trust",
+      "text": "Ed25519 and ML-DSA-65, both required, over the signed region.",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "Show that both are required on every path, including the older trailer format.",
+        "Which bytes are the signed region, and what is outside it?"
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-005",
+      "category": "boot-trust",
+      "text": "A capsule can only ever lose authority at this step, never gain it.",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "Show the intersection of request, manifest and boot profile in code.",
+        "Can any later step add authority?"
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-006",
+      "category": "boot-trust",
+      "text": "The proof is a transparent, hash-based STARK over the Goldilocks field with a FRI low-degree test: no trusted setup, no powers-of-tau ceremony, no toxic waste that someone has to be trusted to have destroyed.",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "Verifier parameters and the security level they give.",
+        "Is the claim of no trusted setup true of the whole chain, including the enrolled roots?"
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-007",
+      "category": "boot-trust",
+      "text": "The boot checks the kernel's STARK proof before it starts anything.",
+      "source": {
+        "kind": "readme",
+        "location": "README.md",
+        "commit": "551bbd3470fe8f3334b1381f4ffbc096e229a08d"
+      },
+      "to_establish": [
+        "What is the order of checks in the loader, and what runs before the proof is checked?"
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-008",
+      "category": "boot-trust",
+      "text": "The bootloader verifies the kernel with two independent signatures, one of them post-quantum, then checks the kernel's own proof against a root baked into the bootloader.",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "Where is the root baked in, and what protects it from replacement?"
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-009",
+      "category": "boot-trust",
+      "text": "The client checks the host's two signatures, its TPM quote and its boot chain before any credential is sent.",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "What does the client check when the host has no TPM or reports a self-reported boot?"
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-010",
+      "category": "capsule-isolation",
+      "text": "Anything not on the list is refused, and the log says why.",
+      "source": {
+        "kind": "readme",
+        "location": "README.md",
+        "commit": "551bbd3470fe8f3334b1381f4ffbc096e229a08d"
+      },
+      "to_establish": [
+        "Is every capability check in the kernel, or can a service grant more than its manifest lists?"
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-011",
+      "category": "capsule-isolation",
+      "text": "Five properties hold over every state the kernel can reach, tied to the Rust that ships.",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "Name the five properties and the theorems.",
+        "What does reachable mean in the model, and what is excluded from it?"
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-012",
+      "category": "proofs",
+      "text": "NØNOS proves the code.",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "Which code, and which properties? State the gap between the extracted functions and the whole kernel."
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-013",
+      "category": "proofs",
+      "text": "1,174 functions are extracted and proved this way.",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "Reproduce the count from the evidence file at a pinned commit."
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-014",
+      "category": "proofs",
+      "text": "Of the 1,174, 533 carry a property about what the function does; 641 carry only the theorem that a generated wrapper is the method it forwards to; none are left unproven.",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "Reproduce both counts.",
+        "Spot-check that the 533 properties are not trivially true."
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-015",
+      "category": "proofs",
+      "text": "the specification corpus holds 1,604 theorems and lemmas in 201 Lean files with no sorry anywhere, 115 Kani harnesses over the crypto and parser paths",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "Reproduce each count.",
+        "Check every Kani bound is backed by an unwinding assertion."
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-016",
+      "category": "privacy",
+      "text": "Memory is wiped when you power off, and nothing is written to a disk unless you install.",
+      "source": {
+        "kind": "readme",
+        "location": "README.md",
+        "commit": "551bbd3470fe8f3334b1381f4ffbc096e229a08d"
+      },
+      "to_establish": [
+        "What is wiped, by what mechanism, and when: orderly shutdown only, or also a crash or a power cut?",
+        "Test that a live session writes no block to any attached disk."
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-017",
+      "category": "privacy",
+      "text": "It runs from memory, checks every program before it starts, and forgets everything at power-off.",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "Does anything survive: firmware variables, the TPM, NVRAM, a USB stick the user attaches?"
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-018",
+      "category": "privacy",
+      "text": "no telemetry because there is no switch for it.",
+      "source": {
+        "kind": "readme",
+        "location": "README.md",
+        "commit": "551bbd3470fe8f3334b1381f4ffbc096e229a08d"
+      },
+      "to_establish": [
+        "Measure all egress of an idle machine over a day, by destination and capsule.",
+        "Compare the result with the egress list in the privacy documentation."
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-019",
+      "category": "privacy",
+      "text": "a random MAC address at each start",
+      "source": {
+        "kind": "readme",
+        "location": "README.md",
+        "commit": "551bbd3470fe8f3334b1381f4ffbc096e229a08d"
+      },
+      "to_establish": [
+        "Is the randomised address used for every frame, including before the setup screen and during DHCP?"
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-020",
+      "category": "network",
+      "text": "NØNOS links no third-party anonymity client.",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "Confirm from the dependency graph and the image contents."
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-021",
+      "category": "network",
+      "text": "so what each learns ends with the boot.",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "What does each transport store, and where? Test that no file is written."
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-022",
+      "category": "capsule-isolation",
+      "text": "NØNOS runs unmodified x86_64 Linux programs as capsules.",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "Where does the Linux personality sit in the trust chain, and what can a guest reach?"
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-023",
+      "category": "ai",
+      "text": "so the conversation never leaves the machine to be fast enough.",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "Test that inference makes no network request, and that the model capsule holds no network capability."
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-024",
+      "category": "hardware",
+      "text": "The kernel starts every CPU the firmware brings up, up to 256, and schedules processes across all of them from one run queue.",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "What was the largest CPU count actually tested?",
+        "Is a single run queue a scaling limit or an isolation risk?"
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-025",
+      "category": "hardware",
+      "text": "five families are proven on real hardware.",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "Which hardware, which firmware versions, and where is the evidence?",
+        "What does proven mean here: a boot, or a defined test suite?"
+      ],
+      "verdict": "unverified"
+    },
+    {
+      "id": "C-026",
+      "category": "build",
+      "text": "so a rebuild on any machine now measures to the enrolled trust",
+      "source": {
+        "kind": "website",
+        "location": "https://nonos.software/",
+        "retrieved": "2026-11-15"
+      },
+      "to_establish": [
+        "Rebuild on two machines and compare. List what differs."
+      ],
+      "verdict": "unverified"
+    }
+  ]
+}
