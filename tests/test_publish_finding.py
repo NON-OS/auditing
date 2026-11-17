@@ -100,5 +100,51 @@ class Publish(unittest.TestCase):
             self.assertEqual(n, "1")
 
 
+    def test_open_finding_is_published_at_confirmation(self):
+        doc = pf.build(draft(), "open", today=TODAY)
+        self.assertEqual(doc["status"], "open")
+        self.assertNotIn("fix", doc)
+        self.assertNotIn("reason", doc)
+        self.assertEqual(doc["dates"]["published"], "2026-12-02")
+
+    def test_open_finding_cannot_carry_a_fix(self):
+        doc = pf.build(draft(), "open", today=TODAY)
+        doc["fix"] = {"commit": HASH}
+        import validate_findings as vf
+        self.assertTrue(vf.policy(doc, TODAY))
+
+    def test_update_marks_an_open_finding_fixed_and_keeps_its_published_date(self):
+        opened = pf.build(draft(), "open", today=TODAY)
+        later = datetime.date(2026, 12, 20)
+        doc = pf.build(opened, "fixed", HASH, "2026-12-19", today=later, update=True)
+        self.assertEqual(doc["status"], "fixed")
+        self.assertEqual(doc["dates"]["published"], "2026-12-02")
+        self.assertEqual(doc["dates"]["updated"], "2026-12-20")
+        with tempfile.TemporaryDirectory() as d:
+            with self.assertRaises(pf.Refused):
+                pf.write(doc, d, update=True)
+            pf.write(opened, d)
+            pf.write(doc, d, update=True)
+            self.assertEqual(json.loads((Path(d) / "findings" / "published" / "NKA-2026-001.json").read_text())["status"], "fixed")
+
+    def test_writing_rules_are_enforced(self):
+        with self.assertRaises(pf.Refused):
+            pf.build(draft(description="The handler answers \u2014 for any process, with no caller check."), "open", today=TODAY)
+
+    def test_pages_and_index_are_rendered_and_stay_in_step(self):
+        import render_findings as rf
+        doc = pf.build(draft(description="See `kernel:src/example.rs:10` where the handler answers any pid."), "open", today=TODAY)
+        with tempfile.TemporaryDirectory() as d:
+            pf.write(doc, d)
+            pub = Path(d) / "findings" / "published"
+            self.assertIn("NKA-2026-001", (pub / "README.md").read_text())
+            page = (pub / "NKA-2026-001.md").read_text()
+            self.assertIn("Open. Published when it was confirmed", page)
+            self.assertNotIn("`kernel:", page)
+            self.assertEqual(rf.stale(d), [])
+            (pub / "NKA-2026-001.md").write_text("changed")
+            self.assertEqual(rf.stale(d), ["NKA-2026-001.md"])
+
+
 if __name__ == "__main__":
     unittest.main()

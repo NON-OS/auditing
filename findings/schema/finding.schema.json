@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "A published finding",
-  "description": "A finding that has been verified, reported to the maintainers and then fixed, accepted as a risk, or disputed. Nothing else is stored in this repository.",
+  "description": "A finding that was reproduced or fully traced and then survived a second reviewer. It is published when it is confirmed, with status open, and updated when the maintainers fix it, accept the risk or dispute it.",
   "type": "object",
   "required": [
     "id",
@@ -145,6 +145,7 @@
     },
     "status": {
       "enum": [
+        "open",
         "fixed",
         "accepted-risk",
         "disputed"
@@ -178,6 +179,10 @@
           "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
         },
         "published": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "updated": {
           "type": "string",
           "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
         }

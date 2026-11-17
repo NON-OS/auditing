@@ -2,12 +2,14 @@
 # SPDX-License-Identifier: Apache-2.0
 """Validate the published findings, and enforce the disclosure policy.
 
-Only published findings may live in this repository, in findings/published/. Each one must:
+Only published findings may live in this repository, in findings/published/. A finding is published
+when it is confirmed, with status open, and updated when the maintainers decide. Each one must:
 
 - match findings/schema/finding.schema.json;
 - be named after its id;
-- have a status that matches its evidence: a "fixed" finding carries a fix commit and a fix
-  date, and an "accepted-risk" or "disputed" finding carries the maintainers' reason;
+- have a status that matches its evidence: an "open" finding carries neither a fix nor a reason, a
+  "fixed" finding carries a fix commit and a fix date, and an "accepted-risk" or "disputed"
+  finding carries the maintainers' reason;
 - be published on or after the day it was reported, and never in the future.
 
 The validator reads the schema and checks the subset of JSON Schema that the schema uses, so
@@ -69,6 +71,8 @@ def policy(doc, today):
     if published < reported:
         errors.append("dates.published is before dates.reported")
     status = doc.get("status")
+    if status == "open" and ("fix" in doc or "fixed" in dates or "reason" in doc):
+        errors.append("an open finding carries no fix and no reason")
     if status == "fixed":
         if "fix" not in doc or "fixed" not in dates:
             errors.append("a fixed finding needs 'fix' and 'dates.fixed'")

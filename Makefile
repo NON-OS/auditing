@@ -12,6 +12,7 @@ links:
 
 findings:
 	$(PYTHON) scripts/validate_findings.py
+	$(PYTHON) scripts/render_findings.py --check
 
 claims:
 	$(PYTHON) scripts/validate_claims.py
