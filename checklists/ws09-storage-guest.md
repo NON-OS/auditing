@@ -18,4 +18,4 @@ Persistent state, and the compatibility layer that runs foreign programs.
 
 ## Notes
 
-Engagement notes for this workstream are kept privately until each finding has been disclosed. Do not add unfixed findings to this file.
+Candidates for this workstream stay private until they are confirmed. A confirmed finding is published in `findings/published`, not in this file.

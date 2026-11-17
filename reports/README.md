@@ -10,4 +10,4 @@ Each published report lives in its own directory, `reports/<id>/`, for example
 | `baseline.md` | The measurements from `scripts/metrics.py` |
 | `SHA256SUMS` | The hash of every file in the directory |
 
-A report is published only after every finding in it has been fixed, accepted as a risk or disputed. See [docs/disclosure.md](../docs/disclosure.md).
+A report is published when it is complete. Each finding in it is already published in [findings/published](../findings/published/README.md). See [docs/disclosure.md](../docs/disclosure.md).

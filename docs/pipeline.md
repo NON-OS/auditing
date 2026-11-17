@@ -39,7 +39,7 @@ The project documents these in `kernel:docs/security/checking-the-claims.md`. Th
 | `scripts/metrics.py` | Sizes the tree: lines, `unsafe`, inline assembly, allowances, lock-file packages | built, tested |
 | `scripts/validate_claims.py` | Holds the claims register to its evidence rules | built, tested |
 | `scripts/validate_findings.py` | Holds published findings to the disclosure rules | built, tested |
-| `scripts/leak_guard.py` | Keeps unfixed findings, keys and real addresses out of this repository | built, tested |
+| `scripts/leak_guard.py` | Keeps keys, identifiers and real addresses out of this repository | built, tested |
 | Structure-aware syscall and parser fuzzers | Reach the kernel's entry points from QEMU | to build in phase 3 |
 | QEMU fault injection with a software TPM | TPM errors, truncated trailers, bad firmware tables | to build in phase 3 |
 | Miri, cargo-geiger, cargo-vet | Undefined behaviour in host-portable logic, an unsafe inventory, dependency provenance | to add in phase 0 |

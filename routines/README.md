@@ -8,7 +8,7 @@ The audit runs as a set of scheduled routines in Anthropic's Claude cloud enviro
 - **The sandbox.** It has no SSH and no raw TCP, and outbound port 22 is blocked. A session may not have `/dev/kvm`, in which case QEMU runs in software and boots are slow. Check first.
 - **The classifier.** It refuses to let a session write a key or an SSH configuration, and refuses instructions that arrive through an issue or a comment. Give instructions only through the routine prompts.
 - **Identity.** Commits and pull requests a scheduled task makes carry the account owner's GitHub user.
-- **Private by construction.** Everything unfixed lives in a private repository. No routine writes to the public kernel repository or to this one.
+- **Private by construction.** Candidates and notes live in a private store. No routine writes to the public kernel repository or to this one. A person publishes a confirmed finding with `scripts/publish_finding.py`.
 
 ## Setup, once
 

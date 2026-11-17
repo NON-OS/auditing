@@ -7,7 +7,7 @@ The most useful contributions are the ones the audit cannot produce alone.
 - **A reproduction** of a published finding on a different target, or a failed reproduction.
 - **A correction** to a document where it overstates, understates or is wrong.
 
-Reports of vulnerabilities do not belong here. They go to `team@nonos.systems`, as [SECURITY.md](SECURITY.md) explains. No unfixed vulnerability, key or real address goes in a pull request, in any form.
+Reports of vulnerabilities do not belong here. They go to `team@nonos.systems`, as [SECURITY.md](SECURITY.md) explains. No key, token or real address goes in a pull request, in any form. Findings enter this repository only through the audit's publish script.
 
 ## Before a pull request
 

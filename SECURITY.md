@@ -2,7 +2,7 @@
 
 ## A vulnerability in the NØNOS kernel
 
-Report it to `team@nonos.systems`, as the project's own policy asks (`kernel:SECURITY.md`, `kernel:docs/security/reporting-a-vulnerability.md`). Do not open a public issue or pull request about it before it is fixed, here or in the kernel repository.
+Report it to `team@nonos.systems`, as the project's own policy asks (`kernel:SECURITY.md`, `kernel:docs/security/reporting-a-vulnerability.md`). Do not open a public issue or pull request about it before it is fixed, here or in the kernel repository. This is about reports from outside the audit. The audit publishes its own confirmed findings at once.
 
 The project publishes no key for reports, commits to no response time and sets no disclosure deadline in the current release. If you need encryption, say so in a short first email without the details and agree a channel first. If you plan to publish, say when in the report.
 
@@ -14,4 +14,4 @@ A script here that leaks something, mishandles a secret or can be abused goes to
 
 ## How the audit handles its own findings
 
-[docs/disclosure.md](docs/disclosure.md) sets out how a finding moves from candidate to publication. Nothing unfixed is published here.
+[docs/disclosure.md](docs/disclosure.md) sets out how a finding moves from candidate to publication. The audit publishes its own confirmed findings in full the day they are confirmed.

@@ -27,8 +27,9 @@ at that commit, and the status you keep refers to it.
 
 ## Rules
 
-1. Nothing unfixed goes anywhere outside {{PRIVATE_REPO}}. No public issue, pull request, branch or
-   comment on the public kernel repository or the public audit repository, ever.
+1. Nothing goes anywhere outside {{PRIVATE_REPO}} from you. No public issue, pull request, branch or
+   comment on the public kernel repository or the public audit repository, ever. A person publishes
+   a finding, so put each new finding first in the status.
 2. You do not decide that something is secure. You report what was tested and what was not.
 3. Keep the pace modest. The usage of this audit is limited, so do not start work for its own sake.
    If nothing changed since your last run, say so in one line in the status and stop.

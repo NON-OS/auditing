@@ -9,7 +9,7 @@
 | 2. Review | Work through the checklists, highest risk first | candidate findings, private |
 | 3. Test | Boot in QEMU with a software TPM. Inject faults. Fuzz parsers and system-call entry points | harnesses here, results in the private notes |
 | 4. Verify | A second reviewer tries to refute every candidate from scratch | findings, and a count of candidates dropped |
-| 5. Report | Write the report and the retest plan. Tell the maintainers. Publish after the fix | `reports/<id>/` |
+| 5. Report | Write the report and the retest plan. Tell the maintainers. Publish each finding when it is confirmed, and update it when it is decided | `reports/<id>/` |
 
 Two workstreams run beside the technical ones from phase 1 to the end: claims ([claims.md](claims.md)) and explainability ([explainers.md](explainers.md)). A report is complete only when both are.
 

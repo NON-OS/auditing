@@ -13,7 +13,7 @@ The audit moved from preparation to running on this date. In order:
 5. The cloud environment was set up. Claude runs in sandboxes that hold no keys and cannot push. Every run has a cost cap, the account has a monthly limit, and an alert goes out at half of it. Notes go to a private store.
 6. A lead, a refuter and a worker were deployed, each as its own agent. The lead and the refuter ran once, against an empty store, and behaved as designed.
 7. The first workstream, WS3 (syscall layer and capabilities), ran twice against the release. It read the syscall layer, cross-checked the 196 syscall numbers against the registry, built a table of which capsule holds which capability, and ran the project's own host tests, 2,167 of them, which all passed. That pass is a baseline and not a result of this audit.
-8. The workers wrote candidates. Every one is a hypothesis and none is a finding. They stay private until they are fixed.
+8. The workers wrote candidates. Every one is a hypothesis and none is a finding. They stay private until one is reproduced and survives the second reviewer, and then it is published as a finding.
 9. The refuter completed its first review of a WS3 candidate, working only from the claim and the evidence.
 10. All 14 workstreams were put on a schedule. Each worker runs every fourth day, the lead and the refuter run daily, and WS1 (the boot chain) was started the same day.
 
