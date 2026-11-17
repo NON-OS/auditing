@@ -35,6 +35,12 @@ Run the lead, the refuter and two workers for two days. Look at the usage and at
 
 Workers write to their own branch and never to `main`. The lead merges. Status goes only into the body of the status issue, because the GitHub comment tool adds a footer to what it posts.
 
+## Local sessions
+
+Work that should spend API credits runs in a local session, because a cloud session always uses the subscription. `scripts/setup_local_workspace.sh` builds the private workspace: the notes folders, the kernel checked out twice and read only (at the release and at `main`, each at a full commit hash in `targets.lock.json`), a clone of this repository, and the prompt to start with. The workspace has no remote, so nothing in it can be pushed by accident.
+
+Start Claude Code in the workspace with an API key from the Claude Console organization that holds the credit, confirm with `/status` that the key is the active credential, watch `/cost`, and give it `START-PROMPT.md`. Set a spend limit in the Console first. Run the session as a separate operating-system user, so it cannot read the auditor's own files or keys.
+
 ## Stopping
 
 Disable every routine and the work stops. Do it at once if usage runs faster than planned, if a routine writes something it should not, or if something critical appears. The notes stay in the private repository.
