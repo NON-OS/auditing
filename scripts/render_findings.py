@@ -38,7 +38,7 @@ def page(doc):
     rows = [("Component", doc["component"]), ("Severity", doc["severity"]), ("Confidence", doc["confidence"]),
             ("Adversary", doc["adversary"]), ("Location", plain(doc["location"])), ("CVSS 4.0", doc["cvss"]),
             ("Affected", f"release {'yes' if doc['affected']['release'] else 'no'}, main "
-                         f"{'yes' if doc['affected']['main'] else 'no'}, tested at {', '.join(c[:12] for c in doc['affected']['commits'])}"),
+                         f"{'yes' if doc['affected']['main'] else ('no' if doc['affected'].get('main_checked') else 'not checked')}, tested at {', '.join(c[:12] for c in doc['affected']['commits'])}"),
             ("Reported", d["reported"]), ("Published", d["published"])]
     if "fixed" in d:
         rows.append(("Fixed", f"{d['fixed']}, kernel commit {doc['fix']['commit']}"))

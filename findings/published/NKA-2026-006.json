@@ -29,7 +29,7 @@
   "evidence": {
     "reproduced": true,
     "steps": [
-      "The loader's own tpm_nv code (consts, floor_cmd, floor_seq) was compiled into a test harness and run against swtpm 0.7.3, started with startup-clear, by the worker and again independently by the refuter with identical output.",
+      "The loader's own tpm_nv code (consts, floor_cmd, floor_seq) was compiled into a test harness and run against swtpm 0.7.3, started with startup-clear, twice and independently, with identical output.",
       "Printed: the counter and base read back as expected, a direct write to the locked base was refused with 0x148, an owner NV_UndefineSpace of the base succeeded with 0x0 and the floor read back as 0, five NV_Increment calls succeeded and the floor read back as 5, and a squatted base accepted later writes with index authorisation only.",
       "Not run: a full boot under firmware. That the loader then refuses or admits a kernel is by code reading of floor.rs, floor_rule.rs and mode.rs. Main was not checked."
     ],

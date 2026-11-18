@@ -79,6 +79,10 @@
         "main": {
           "type": "boolean"
         },
+        "main_checked": {
+          "type": "boolean",
+          "description": "true only when main was examined for this finding; without it, main false is shown as not checked"
+        },
         "commits": {
           "type": "array",
           "minItems": 1,
