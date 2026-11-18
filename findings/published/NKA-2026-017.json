@@ -1,0 +1,40 @@
+{
+  "id": "NKA-2026-017",
+  "title": "PQClean tamper gate (check-pqclean-pin.sh) fails at the release commit and no CI step runs it",
+  "component": "kernel nonos-ci/check-pqclean-pin.sh, third_party/pqclean/PROVENANCE.md",
+  "severity": "informational",
+  "confidence": "confirmed",
+  "adversary": "A4",
+  "preconditions": [
+    "Supply-chain change to vendored PQClean that no CI step would catch"
+  ],
+  "affected": {
+    "release": true,
+    "main": false,
+    "commits": [
+      "b3dd1fa37ce2e32e3cb2f6a462081fefede4df40"
+    ]
+  },
+  "location": "kernel:nonos-ci/check-pqclean-pin.sh; kernel:third_party/pqclean/PROVENANCE.md; kernel:docs/security/randomness-algorithms.md:44-47",
+  "cvss": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:N/VI:L/VA:N/SC:N/SI:N/SA:N",
+  "description": "Running the script at this commit prints 'pqclean tree drift: expected 2306482b..., actual 0fd27931...' and exits 1. PROVENANCE.md says CI verifies the pin on every push, but no caller exists in .github, nonos-ci, Makefile or nonos-verify. The pin hashes the committed listing, so it covers vendored bytes, not upstream identity. The project's own docs already record both facts.",
+  "impact": "A stated tamper control for the vendored ML-DSA/ML-KEM code is not operating. Content check: the compiled dirs (ml-dsa-65, ml-kem-512/768/1024, common) are identical to PQClean upstream 0586a82, so no tampering was found.",
+  "scenario": [
+    "A change to vendored PQClean sources is merged.",
+    "No CI job runs the pin check.",
+    "The change ships unless a reviewer notices."
+  ],
+  "evidence": {
+    "reproduced": true,
+    "steps": [
+      "Run twice, independently: the script exits 1 with its drift message, and diff -rq of the compiled directories against upstream PQClean at 0586a82 shows no difference.",
+      "Documented by the project (randomness-algorithms.md:44-47)."
+    ]
+  },
+  "remediation": "Regenerate the pin, wire the script into CI as a required job, and record the upstream commit of the snapshot in PROVENANCE.md.",
+  "dates": {
+    "reported": "2026-11-18",
+    "published": "2026-11-18"
+  },
+  "status": "open"
+}
