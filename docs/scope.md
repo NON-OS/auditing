@@ -11,7 +11,9 @@ Both are resolved to full commit hashes at the start by `scripts/resolve_targets
 
 ## What is audited
 
-![The 14 workstreams in four groups](media/diagram-audit-scope.svg)
+![The 19 workstreams in five groups](media/diagram-audit-scope.svg)
+
+Every directory of the kernel and the bootloader has an owning workstream, and each run records which files it read, traced or tested, so coverage can be measured and not assumed.
 
 | Area | Workstream | Checklist |
 |---|---|---|
@@ -29,6 +31,11 @@ Both are resolved to full commit hashes at the start by `scripts/resolve_targets
 | Unsafe code, panics and hygiene | WS12 | [ws12](../checklists/ws12-unsafe-hygiene.md) |
 | Claims and privacy verification | WS13 | [ws13](../checklists/ws13-claims-privacy.md) |
 | Explainability | WS14 | [ws14](../checklists/ws14-explainability.md) |
+| The STARK proof system, at the commit the kernel pins | WS15 | [ws15](../checklists/ws15-stark-proof-system.md) |
+| x86-64 architecture code | WS16 | [ws16](../checklists/ws16-x86-64-architecture.md) |
+| Trusted capsules in user space | WS17 | [ws17](../checklists/ws17-trusted-capsules.md) |
+| Fuzzing campaign | WS18 | [ws18](../checklists/ws18-fuzzing.md) |
+| Open-source tool sweep | WS19 | [ws19](../checklists/ws19-tool-sweep.md) |
 
 ## Out of scope
 

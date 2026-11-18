@@ -18,3 +18,8 @@ One checklist per workstream. Each item names a class of bug to look for. An ite
 | WS12 | [Unsafe code, panics and hygiene](ws12-unsafe-hygiene.md) |
 | WS13 | [Claims and privacy verification](ws13-claims-privacy.md) |
 | WS14 | [Explainability](ws14-explainability.md) |
+| WS15 | [The STARK proof system](ws15-stark-proof-system.md) |
+| WS16 | [x86-64 architecture code](ws16-x86-64-architecture.md) |
+| WS17 | [Trusted capsules](ws17-trusted-capsules.md) |
+| WS18 | [Fuzzing campaign](ws18-fuzzing.md) |
+| WS19 | [Open-source tool sweep](ws19-tool-sweep.md) |
