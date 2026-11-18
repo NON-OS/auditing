@@ -17,13 +17,22 @@ The audit moved from preparation to running on this date. In order:
 9. The refuter completed its first review of a WS3 candidate, working only from the claim and the evidence.
 10. All 14 workstreams were put on a schedule. Each worker runs every fourth day, the lead and the refuter run daily, and WS1 (the boot chain) was started the same day.
 
+## What happened on 2026-11-18
+
+1. Five workstreams were added: the STARK proof system at the commit the kernel pins (WS15), the x86-64 architecture code (WS16), the trusted capsules in user space (WS17), a fuzzing campaign over every shipped fuzz target (WS18), and an open-source tool sweep (WS19).
+2. A coverage map now gives every directory of the kernel and the bootloader an owner, and each run records the files it read, traced or tested.
+3. All 40 fuzz crates build, and about 84 targets ran a first round.
+4. The kernel's cryptography passed about 7,000 differential test vectors against an independent library with no mismatch.
+5. Five more findings were confirmed by two independent reproductions and published.
+6. Builds of a development image of the audited commit are in progress, so that tests can run inside the kernel.
+
 ## Where the audit stands
 
 | Done | In progress | Not started |
 |---|---|---|
 | Scope, method, threat model, severity and disclosure rules | WS3, syscall layer and capabilities. WS1, the boot chain, started | The other 12 workstreams, which are scheduled |
 | System model with every citation checked | Refutation of the WS3 candidates, one reviewed so far | Refutation of candidates from other workstreams |
-| 14 workstream checklists | Running the project's own claim-checking tools on both targets | Verdicts on the claims |
+| 19 workstream checklists | Running the project's own claim-checking tools on both targets | Verdicts on the claims |
 | Claims register seeded with 26 public claims, none yet verified | | Explainers |
 | Tooling: citation, claims, finding, leak and commit checks, code metrics | | Dynamic testing and fuzzing |
 | The cloud environment, the lead, the refuter and the worker | | |
