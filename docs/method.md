@@ -15,6 +15,20 @@ Two workstreams run beside the technical ones from phase 1 to the end: claims ([
 
 A critical finding stops the work and is reported to the maintainers the same day.
 
+## When the audit is done
+
+The audit of a commit is complete only when all of these hold, each shown with evidence in the status page:
+
+1. Every directory of the kernel and the bootloader has an owning workstream.
+2. Every directory is at least traced, and every high-risk directory has parts that were tested.
+3. Every checklist item is done, or skipped with a written reason.
+4. A development build of the audited commit boots, and tests ran inside it for the high-risk workstreams.
+5. Every shipped fuzz target has run for at least two hours, and every crash is triaged.
+6. No candidate is left without a refutation.
+7. Each of the public claims has a verdict with evidence.
+8. Every confirmed finding is published, with a proposed fix.
+9. At least one review by people outside the project, or a written reason why there is none yet.
+
 ## Evidence
 
 Every statement in a report is one of three kinds and says which:

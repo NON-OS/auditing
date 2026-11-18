@@ -40,11 +40,22 @@ The project documents these in `kernel:docs/security/checking-the-claims.md`. Th
 | `scripts/validate_claims.py` | Holds the claims register to its evidence rules | built, tested |
 | `scripts/validate_findings.py` | Holds published findings to the disclosure rules | built, tested |
 | `scripts/leak_guard.py` | Keeps keys, identifiers and real addresses out of this repository | built, tested |
-| Structure-aware syscall and parser fuzzers | Reach the kernel's entry points from QEMU | to build in phase 3 |
-| QEMU fault injection with a software TPM | TPM errors, truncated trailers, bad firmware tables | to build in phase 3 |
-| Miri, cargo-geiger, cargo-vet | Undefined behaviour in host-portable logic, an unsafe inventory, dependency provenance | to add in phase 0 |
-| Semgrep and CodeQL rules | The project's own unsafe and capability patterns | to write in phase 2 |
-| Ghidra and objdump on the sealed bytes | That wipes survive the optimiser, and that secret-dependent code runs in constant time | to run in phase 3 |
+| `scripts/publish_finding.py`, `scripts/render_findings.py` | Publish a confirmed finding, update it when it is decided, and keep its page and the index in step with the JSON | built, tested |
+| The kernel's own fuzz targets, run as a campaign | Every shipped target in rounds, the corpus kept between runs, every crash minimised and traced (WS18) | running |
+| Miri | Undefined behaviour in `unsafe` code, on every host-testable crate (WS19) | running |
+| AddressSanitizer, UndefinedBehaviorSanitizer, loom | Memory errors and ordering bugs in the host tests (WS19) | running |
+| Clippy at its strictest, cargo-geiger | Lints, and an inventory of `unsafe` per crate and dependency (WS19) | running |
+| cargo-mutants | Which checks the tests do not really pin (WS19) | running |
+| Semgrep, CodeQL | Static analysis with security rule sets (WS19) | running |
+| cargo-audit, cargo-deny, OSV-Scanner, OpenSSF Scorecard | Advisories and practices, run independently of the project's CI (WS19) | running |
+| Clang static analyzer, cppcheck, a constant-time test | The vendored C and assembly, and the ML-DSA-65 signing path (WS19) | running |
+| Project Wycheproof and NIST ACVP vectors | Known-bad cases for Ed25519, ChaCha20-Poly1305, P-256, HKDF and ML-DSA-65 (WS19) | running |
+| lean4checker | Re-checks the Lean proofs independently (WS19) | running |
+| QEMU with a software TPM | Boots of the published image and of a development build of the audited commit, and tests inside them | in progress |
+| Structure-aware syscall fuzzer | Reaches the kernel's entry points from inside a running system | to build once the development build boots |
+| Ghidra and objdump on the sealed bytes | That wipes survive the optimiser, and that secret-dependent code runs in constant time | to run |
+
+Every tool run is recorded with its version and exact command. A tool hit is a lead: it is confirmed in the code or dismissed with a reason before anything reaches a finding.
 
 ## How the work is run
 
