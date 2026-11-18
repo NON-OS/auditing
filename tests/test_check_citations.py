@@ -59,5 +59,15 @@ class Citations(unittest.TestCase):
         self.assertEqual(len(found), 2)
 
 
+    def test_directory_citation_resolves_but_not_with_a_line(self):
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as d:
+            k = Path(d)
+            (k / "src" / "arch").mkdir(parents=True)
+            self.assertEqual(cc.problems_in("see `kernel:src/arch`", k, cc.OURS, "x.md", {}), [])
+            self.assertEqual(len(cc.problems_in("see `kernel:src/arch:3`", k, cc.OURS, "x.md", {})), 1)
+            self.assertEqual(len(cc.problems_in("see `kernel:src/missing`", k, cc.OURS, "x.md", {})), 1)
+
 if __name__ == "__main__":
     unittest.main()

@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 """Check that cited source locations exist.
 
-Two uses, one rule: a citation must point at a file that exists at the audited commit, and a cited
-line number must lie inside that file.
+Two uses, one rule: a citation must point at a file or directory that exists at the audited commit,
+and a cited line number must lie inside a file.
 
   check_citations.py ours KERNEL_DIR
       Check the citations in this repository's own Markdown. A citation here is written
@@ -48,8 +48,11 @@ def problems_in(text, kernel, pattern, name, cache):
         for m in pattern.finditer(line):
             rel, lo, hi = m.group(1), m.group(2), m.group(3)
             target = kernel / rel
+            if target.is_dir() and not lo:
+                continue
             if not target.is_file():
-                out.append({"file": name, "line": n, "cite": m.group(0).strip("`"), "why": "no such file"})
+                why = "a directory cannot carry a line number" if target.is_dir() else "no such file"
+                out.append({"file": name, "line": n, "cite": m.group(0).strip("`"), "why": why})
                 continue
             if lo:
                 last = int(hi or lo)

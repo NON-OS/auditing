@@ -1,6 +1,6 @@
 # WS18. Fuzzing campaign
 
-Every fuzz target the kernel ships, in `kernel:fuzz/fuzz_targets` and in the fuzz directories of the attestation path, the proof verifier, the boot measurement code and the userland proof crates, run as a campaign that grows across runs.
+Every fuzz target the kernel ships, listed in `kernel:fuzz/targets.json` and kept in the fuzz directories of the attestation path, the proof verifier, the boot measurement code and the userland proof crates, run as a campaign that grows across runs.
 
 ## Look for
 
