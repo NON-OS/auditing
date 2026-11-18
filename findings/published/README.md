@@ -2,11 +2,12 @@
 
 Every finding of this audit is published here when it is confirmed, with its evidence, and updated when the maintainers fix it, accept the risk or dispute it. [docs/disclosure.md](../../docs/disclosure.md) has the rules.
 
-7 published: 7 open.
-By severity: 1 medium, 3 low, 3 informational.
+8 published: 8 open.
+By severity: 1 medium, 4 low, 3 informational.
 
 | ID | Title | Severity | Status | Published |
 |---|---|---|---|---|
+| [NKA-2026-021](NKA-2026-021.md) | PIE ELF with e_entry near 2^64 panics the kernel after mapping; RELRO page walk is unbounded under the global loader lock | low | open | 2026-11-18 |
 | [NKA-2026-020](NKA-2026-020.md) | ELF loader RELATIVE relocation stores 8 bytes through one frame; an unaligned r_offset writes into the physically next frame | medium | open | 2026-11-18 |
 | [NKA-2026-017](NKA-2026-017.md) | PQClean tamper gate (check-pqclean-pin.sh) fails at the release commit and no CI step runs it | informational | open | 2026-11-18 |
 | [NKA-2026-016](NKA-2026-016.md) | STARK chained query grind: a fresh query draw costs 2^(g-3), not 2^g, so published soundness figures are overstated by about 2 to 3 bits | informational | open | 2026-11-18 |

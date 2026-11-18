@@ -1,0 +1,39 @@
+{
+  "id": "NKA-2026-021",
+  "title": "PIE ELF with e_entry near 2^64 panics the kernel after mapping; RELRO page walk is unbounded under the global loader lock",
+  "component": "kernel ELF loader src/elf/loader/core/loader/base_addr.rs, relro.rs",
+  "severity": "low",
+  "confidence": "confirmed",
+  "adversary": "A4",
+  "preconditions": [
+    "Capsule must pass the spawn gate: publisher-tier capsule with a vendor-issued publisher certificate, signed manifest and an attestation under the vendor root or a root the person enrolled (kernel:src/kernel_core/process_spawn/capsule_spawn/runner/tier.rs:20-26, attest_gate.rs:19-30)"
+  ],
+  "affected": {
+    "release": true,
+    "main": false,
+    "commits": [
+      "b3dd1fa37ce2e32e3cb2f6a462081fefede4df40"
+    ]
+  },
+  "location": "kernel:src/elf/loader/core/loader/base_addr.rs:29-36; kernel:src/memory/addr/virt.rs:79-84; kernel:src/elf/loader/core/parse_header/validate.rs:17-50; kernel:src/elf/loader/core/relro.rs:38-56; kernel:src/elf/loader/global.rs:35-38; kernel:Cargo.toml:1618-1641; kernel:src/boot/panic/handler.rs:56-68",
+  "cvss": "CVSS:4.0/AV:L/AC:L/AT:P/PR:H/UI:A/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N",
+  "description": "entry_point does base_addr + e_entry with a plain add; the release profile has overflow-checks=true and panic=abort, and nothing checks e_entry against a PT_LOAD. Second symptom: enforce_relro walks PT_GNU_RELRO page by page with no bound to the image and no shootdown service, under the global ELF_LOADER lock.",
+  "impact": "Availability: one enrolled capsule can halt the machine at spawn (panic = abort), or block every other spawn while a long RELRO walk runs. No confidentiality or integrity effect. Same gate precondition as NKA-2026-020.",
+  "scenario": [
+    "Author sets e_entry = 0xffffffffffffffff in a PIE capsule and has it enrolled.",
+    "On spawn the loader maps the image, then entry_point overflows and the kernel panics and halts."
+  ],
+  "evidence": {
+    "reproduced": true,
+    "steps": [
+      "Host harness (real src/elf copy, release profile with overflow-checks): `h_elf entry` panics at virt.rs:82 'attempt to add with overflow'; 2M-input mutation fuzz gave 700 panics all at that site; a second, independent run of 20M inputs gave 5,879 panics. RELRO time linear (memsz 2^32 about 23 ms with a stub translate).",
+      "NOT run: any boot, the kernel panic path, real RELRO cost at 2^47 (extrapolated)."
+    ]
+  },
+  "remediation": "Use checked_add and return an ElfError; require e_entry inside an executable PT_LOAD; bound RELRO to the image's own segments.",
+  "dates": {
+    "reported": "2026-11-18",
+    "published": "2026-11-18"
+  },
+  "status": "open"
+}
