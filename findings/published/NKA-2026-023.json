@@ -1,0 +1,39 @@
+{
+  "id": "NKA-2026-023",
+  "title": "Committed image capability ceiling disagrees with the capsule catalogue; the project's own check fails at the tag",
+  "component": "kernel nonos-data/trust/policy/image_capability_ceiling.bin, scripts/check_image_ceiling.py",
+  "severity": "informational",
+  "confidence": "confirmed",
+  "adversary": "A4",
+  "preconditions": [
+    "make/cargo-built image (the nix path writes its own ceiling per profile; which path made the v0.9.3.5 artefacts was not checked)"
+  ],
+  "affected": {
+    "release": true,
+    "main": false,
+    "commits": [
+      "b3dd1fa37ce2e32e3cb2f6a462081fefede4df40"
+    ]
+  },
+  "location": "kernel:nonos-data/trust/policy/image_capability_ceiling.bin; kernel:scripts/check_image_ceiling.py:37-47; kernel:src/security/image_ceiling/value.rs:38-50; kernel:build_trust_stage.rs:29-36; kernel:src/kernel_core/process_spawn/capsule_spawn/runner/preflight.rs:68-75",
+  "cvss": "CVSS:4.0/AV:L/AC:H/AT:P/PR:H/UI:N/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N",
+  "description": "The committed ceiling 0x1fdfffff7d refuses bits 40-43 (UserFiles, AcpiOwner, PolicyPush, PowerControl) that four capsules declare, and admits bit 9 (Admin) that none declares. The check script exits 1 and is wired into no makefile, nix file or workflow. A missing, short or zero ceiling file reads back as unrestricted (value.rs:39-47).",
+  "impact": "Fails closed for four capsules on a make-built image; one spare capability bit admitted. A staging mistake weakens the ceiling instead of failing the build. No privilege gain found.",
+  "scenario": [
+    "Build with make from the tag.",
+    "preflight refuses the four capsules whose caps leave the ceiling."
+  ],
+  "evidence": {
+    "reproduced": true,
+    "steps": [
+      "Script run twice, independently: exit 1 with the two messages above; catalogue (170 entries) and 168 manifests compared.",
+      "NOT run: make build or boot."
+    ]
+  },
+  "remediation": "Regenerate the committed ceiling from the catalogue in CI and make the check blocking; treat a missing or zero ceiling as a build error for release profiles.",
+  "dates": {
+    "reported": "2026-11-18",
+    "published": "2026-11-18"
+  },
+  "status": "open"
+}

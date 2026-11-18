@@ -2,11 +2,12 @@
 
 Every finding of this audit is published here when it is confirmed, with its evidence, and updated when the maintainers fix it, accept the risk or dispute it. [docs/disclosure.md](../../docs/disclosure.md) has the rules.
 
-8 published: 8 open.
-By severity: 1 medium, 4 low, 3 informational.
+9 published: 9 open.
+By severity: 1 medium, 4 low, 4 informational.
 
 | ID | Title | Severity | Status | Published |
 |---|---|---|---|---|
+| [NKA-2026-023](NKA-2026-023.md) | Committed image capability ceiling disagrees with the capsule catalogue; the project's own check fails at the tag | informational | open | 2026-11-18 |
 | [NKA-2026-021](NKA-2026-021.md) | PIE ELF with e_entry near 2^64 panics the kernel after mapping; RELRO page walk is unbounded under the global loader lock | low | open | 2026-11-18 |
 | [NKA-2026-020](NKA-2026-020.md) | ELF loader RELATIVE relocation stores 8 bytes through one frame; an unaligned r_offset writes into the physically next frame | medium | open | 2026-11-18 |
 | [NKA-2026-017](NKA-2026-017.md) | PQClean tamper gate (check-pqclean-pin.sh) fails at the release commit and no CI step runs it | informational | open | 2026-11-18 |
