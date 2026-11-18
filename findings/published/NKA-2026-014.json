@@ -1,0 +1,41 @@
+{
+  "id": "NKA-2026-014",
+  "title": "proof-corpus-root.sh axiom allowlist is vacuous: the corpus root forms with an added axiom",
+  "component": "kernel verification/lean proof-corpus-root.sh, lean.yml gate",
+  "severity": "low",
+  "confidence": "confirmed",
+  "adversary": "A4",
+  "preconditions": [
+    "Write access to the verification/lean tree (insider or supply-chain change)",
+    "Corpus root is then bound to the attested image as if every load-bearing theorem used standard axioms only"
+  ],
+  "affected": {
+    "release": true,
+    "main": false,
+    "commits": [
+      "b3dd1fa37ce2e32e3cb2f6a462081fefede4df40"
+    ]
+  },
+  "location": "kernel:verification/lean/proof-corpus-root.sh:6-13,31,34-47,56-60; kernel:.github/workflows/lean.yml; kernel:collect-evidence.sh:135",
+  "cvss": "CVSS:4.0/AV:N/AC:L/AT:N/PR:H/UI:N/VC:N/VI:L/VA:N/SC:N/SI:N/SA:N",
+  "description": "The script extracts axiom names with grep -oE \"'[^']+'\" on #print axioms output, but only the theorem name is quoted ('Thm' depends on axioms: [A, B]). The extracted tokens are theorem names, all starting Nonos., and the filter that drops Nonos.|propext|Classical.choice|Quot.sound leaves nothing, so any axiom (also outside the Nonos namespace) passes. Only the sorry grep is effective. The CI gate fails only on sorryAx in axioms.txt, AxiomProfile.lean lists 651 of 1604 theorems, and the root hashes only verification/lean/Nonos, not verification/extraction or formal/.",
+  "impact": "Process-assurance gap: the claim that the corpus root forms only over standard axioms is false at this commit. No runtime effect.",
+  "scenario": [
+    "Contributor adds `axiom Evil : False` and a theorem using it to the Nonos namespace.",
+    "proof-corpus-root.sh exits 0 and prints a root.",
+    "The root is attested as covering proven properties."
+  ],
+  "evidence": {
+    "reproduced": true,
+    "steps": [
+      "Reproduced twice, independently, with Lean 4.15.0: the probe output [Nonos.Evil] and [OutsideEvil] passes the script's pipeline, and the real script, run end to end on a copy with the injected axiom, exits 0 and prints a root.",
+      "Not tested: main; whether another script commits a root over verification/extraction or formal/."
+    ]
+  },
+  "remediation": "Parse the bracketed axiom list of each #print axioms line and compare to an exact allowlist, fail on any other axiom or on theorems missing from the profile, and make the escape-hatch grep a gate.",
+  "dates": {
+    "reported": "2026-11-18",
+    "published": "2026-11-18"
+  },
+  "status": "open"
+}
