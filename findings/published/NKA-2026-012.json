@@ -1,0 +1,41 @@
+{
+  "id": "NKA-2026-012",
+  "title": "Measured boot verdict takes the last PCR 4 application as the loader that ran, so an enrolled loader loaded and never started is admitted as MEASURED",
+  "component": "kernel nonos-boot-measure tcg replay and gate verdict",
+  "severity": "informational",
+  "confidence": "confirmed",
+  "adversary": "A3",
+  "preconditions": [
+    "Secure Boot off or an attacker application signed for db, and a TPM that answers",
+    "Attacker application first in boot order that LoadImage()s the genuine loader without starting it"
+  ],
+  "affected": {
+    "release": true,
+    "main": false,
+    "commits": [
+      "b3dd1fa37ce2e32e3cb2f6a462081fefede4df40"
+    ]
+  },
+  "location": "kernel:nonos-boot-measure/src/tcg/replay.rs:55-61; kernel:nonos-boot-measure/src/gate/verdict.rs:36-57; kernel:nonos-boot-measure/src/lib.rs:20-24; kernel:docs/security/measured-boot-and-tpm.md:66; kernel:docs/nsh/nsh-v1-attest.md:214-216",
+  "cvss": "CVSS:4.0/AV:P/AC:L/AT:N/PR:L/UI:N/VC:N/VI:L/VA:N/SC:N/SI:N/SA:N",
+  "description": "replay keeps only the digest of the last EV_EFI_BOOT_SERVICES_APPLICATION in PCR 4; measured() treats it as the loader. A foreign application earlier in the log is not examined; the log only has to replay to live PCR 4. The project's own nsh document names this attack and the remote nsh verifier rejects it; the kernel's local verdict and its wording ('what ran last before the kernel') do not.",
+  "impact": "The local MkBootAttest record, About screen and installer proofs panel can show 'measured and enrolled' for a boot where a foreign application ran first. No key effect: PCR 4 then includes the foreign application so PCR-bound keys do not open and a remote quote shows it. The attacker could equally patch the kernel's local report. Label accuracy only.",
+  "scenario": [
+    "Attacker app X loads the genuine BOOTX64.EFI (firmware measures it) and does not start it.",
+    "X loads the genuine kernel and builds a handoff with the real log, trailer and record.",
+    "Kernel replay equals live PCR 4, last application is the enrolled loader: Verdict::Measured."
+  ],
+  "evidence": {
+    "reproduced": true,
+    "steps": [
+      "Reproduced twice, independently, at the gate level: a test in a copy of nonos-boot-measure and nonos-attest-path (cargo test) printed Ok((true, 5)) for a foreign application measured before the enrolled loader.",
+      "NOT run: no firmware; that EDK2/OVMF measures at LoadImage for an image never started is taken from the project's nsh document."
+    ]
+  },
+  "remediation": "Apply the nsh PCR 4 rule in the kernel (every application event before the last must be an enrolled boot application or boot manager) or reword the verdict to say last application only. Regression test: foreign app before the loader gives refusal or a different verdict.",
+  "dates": {
+    "reported": "2026-11-18",
+    "published": "2026-11-18"
+  },
+  "status": "open"
+}
