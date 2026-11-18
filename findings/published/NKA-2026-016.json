@@ -1,0 +1,41 @@
+{
+  "id": "NKA-2026-016",
+  "title": "STARK chained query grind: a fresh query draw costs 2^(g-3), not 2^g, so published soundness figures are overstated by about 2 to 3 bits",
+  "component": "STARKs nonos-stark fri_ext (pinned by kernel nox_verify), docs/12-soundness.md",
+  "severity": "informational",
+  "confidence": "confirmed",
+  "adversary": "A4",
+  "preconditions": [
+    "Cheating prover willing to do about 2^77 hash work (documentation figures)",
+    "Applies to the pinned STARKs commit a41bb8bb0dacfea614acc6fb500d0b96abd78d2b, not to kernel code"
+  ],
+  "affected": {
+    "release": true,
+    "main": false,
+    "commits": [
+      "b3dd1fa37ce2e32e3cb2f6a462081fefede4df40"
+    ]
+  },
+  "location": "kernel:Cargo.lock (nox_verify pin a41bb8bb); STARKs:nonos-stark/src/fri_ext/verify.rs:115-127; STARKs:nonos-stark/src/fri_ext/prove.rs:183-185; STARKs:nonos-stark/src/transcript.rs:284-290; STARKs:docs/12-soundness.md section 3.5; STARKs:lean/Shield/Outsourced.lean:87-94",
+  "cvss": "CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:N/VI:N/VA:N/SC:N/SI:N/SA:N",
+  "description": "docs/12-soundness.md 3.5 says a retry of the query grind costs 2^g because the grind is 8 chained searches of g-3 bits. In verify.rs the query positions are drawn after the last nonce, so a prover keeps nonces 1..7 and re-searches only the last chunk (2^(g-3) expected hashes) for each fresh position set. Query-phase work is 2^(q*2.777+g-3): point A 77.8 bits (doc 80.8, published provable 80.1 becomes 77.8), A' 78.0, B 77.2, attestation 97.2 (still above the 80.1 fold-round figure, so the attestation's published 80 bits does not change). The Lean file proves only the total sequential work 2^33.",
+  "impact": "Documentation and proof-claim overstated by 2 to 3 bits on the pool shapes; no effect on the kernel's attestation statement figure. Not an exploit.",
+  "scenario": [
+    "Prover grinds nonces 1..7 once.",
+    "Re-search only nonce 8 (25 bits) for each fresh query draw.",
+    "Four fresh draws cost 100965787 trials, 3.01 x 2^25 in the reproduction."
+  ],
+  "evidence": {
+    "reproduced": true,
+    "steps": [
+      "Reproduced twice, independently, with a harness using the repository's own Transcript at 16 and 22 chunk bits: each fresh query position draw takes about 2^(g-3) work.",
+      "Security effect is arithmetic from the documented figures. NOT run: the full 28-bit attack."
+    ]
+  },
+  "remediation": "Correct docs/12-soundness.md 3.5 and the Lean comment, restate the provable figures (or add one grind bit per chunk, or chain the final query draw so retries cost 2^g), and update PARAMS.md.",
+  "dates": {
+    "reported": "2026-11-18",
+    "published": "2026-11-18"
+  },
+  "status": "open"
+}
