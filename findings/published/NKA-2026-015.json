@@ -1,0 +1,41 @@
+{
+  "id": "NKA-2026-015",
+  "title": "vfs OP_SEARCH truncates to max_hits before removing guarded hits, giving any FileSystem holder a content oracle for /linux-home and /linux-private",
+  "component": "userland capsule_vfs fs_gate and search handler",
+  "severity": "low",
+  "confidence": "confirmed",
+  "adversary": "A1",
+  "preconditions": [
+    "Hostile or compromised capsule holding FileSystem (bit 6) but not ForeignExec (bit 32)",
+    "Guarded files exist (capsule_linux homes live in the vfs store)"
+  ],
+  "affected": {
+    "release": true,
+    "main": false,
+    "commits": [
+      "b3dd1fa37ce2e32e3cb2f6a462081fefede4df40"
+    ]
+  },
+  "location": "kernel:userland/capsule_vfs/src/server/fs_gate/guard.rs:1-9; kernel:userland/capsule_vfs/src/server/fs_gate/paths.rs; kernel:userland/capsule_vfs/src/server/fs_gate/reach.rs:31-43; kernel:userland/capsule_vfs/src/store/fdtable/search.rs:83; kernel:userland/capsule_vfs/src/server/handlers/search.rs:28-59",
+  "cvss": "CVSS:4.0/AV:L/AC:L/AT:N/PR:L/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N",
+  "description": "named() in paths.rs has no OP_SEARCH arm, so reaches() serves OP_SEARCH without the ForeignExec check. Store::search scans name and content of every file including guarded ones, sorts by path and truncates to max_hits; the handler removes guarded hits only after truncation. A decoy file at a path that sorts after /linux-home holding a guess line, searched with max_hits=1, returns empty exactly when an earlier (guarded) path matches. Repeating with a growing prefix recovers a guarded line character by character. guard.rs states that listings and searches never show these trees to anyone.",
+  "impact": "Breaks the stated separation of Linux-personality private data (wallet notes, password files) from other FileSystem holders. Needs a hostile or compromised FileSystem holder. Confidentiality only.",
+  "scenario": [
+    "Attacker writes /zzz-decoy containing a guess line.",
+    "OP_SEARCH with content flag and max_hits=1: an empty reply means a guarded file matched.",
+    "Extend the guess one character at a time (681 queries for a 16 character line in the test)."
+  ],
+  "evidence": {
+    "reproduced": true,
+    "steps": [
+      "Reproduced twice, independently, on the host against the production search handler and gate rule, included by #[path] through userland/fs_proofs: the contents of a guarded test file (pass=Tr0ub4dor&3) were recovered in 681 queries; reaches(OP_SEARCH, no ForeignExec) is true, and OP_OPEN of the same guarded path is refused.",
+      "NOT run: a booted image; mk_cap_check is a shim in host tests; whether any shipped capsule holds FileSystem without ForeignExec and is attackable was not enumerated."
+    ]
+  },
+  "remediation": "Filter guarded hits inside Store::search before applying max_hits (or give OP_SEARCH a gate like the other ops), and add a regression test that a decoy cannot detect guarded content.",
+  "dates": {
+    "reported": "2026-11-18",
+    "published": "2026-11-18"
+  },
+  "status": "open"
+}
