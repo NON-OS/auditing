@@ -1,0 +1,39 @@
+{
+  "id": "NKA-2026-031",
+  "severity": "informational",
+  "cvss": "CVSS:4.0/AV:L/AC:H/AT:P/PR:H/UI:N/VC:N/VI:N/VA:N/SC:N/SI:N/SA:N",
+  "affected": {
+    "release": true,
+    "main": false,
+    "commits": [
+      "b3dd1fa37ce2e32e3cb2f6a462081fefede4df40"
+    ]
+  },
+  "dates": {
+    "reported": "2026-11-19",
+    "published": "2026-11-19"
+  },
+  "title": "Syscall-return signal hook captures rbx and r12-r15 from live registers three Rust frames deep (latent)",
+  "component": "kernel src/arch/x86_64/syscall/manager/signal_return.rs",
+  "confidence": "confirmed",
+  "adversary": "A1",
+  "preconditions": [
+    "A path that installs a signal handler; none is reachable at this commit (SigState::set_action has no caller, no sigaction syscall)"
+  ],
+  "location": "kernel:src/arch/x86_64/syscall/manager/signal_return.rs:32,84-109; kernel:src/process/signal/delivery/syscall_return.rs:22-47; kernel:src/process/signal/delivery/install.rs:30-33; kernel:src/process/signal/state/actions.rs:25; kernel:src/arch/x86_64/asm/syscall.S:43-49",
+  "description": "read_callee_saved copies rbx,r12-r15 with mov, assuming they still hold user values; the hook's prologue has already pushed them and reused them. The asm file's own comment says Rust cannot read them. The captured Context is the one written into a user SigFrame when a handler is installed.",
+  "impact": "No reachable effect: handler installation is unreachable, so the wrong values never reach a user stack. If a sigaction path is added, kernel loop values would be copied to user memory (register disclosure) and the user's values lost on return.",
+  "scenario": [
+    "A future change makes set_action reachable.",
+    "A signal is delivered on syscall return; the frame holds kernel loop values."
+  ],
+  "evidence": {
+    "reproduced": true,
+    "steps": [
+      "Disassembly (objdump -d -M intel) of syscall_return_signal_hook in two independent builds of b3dd1fa, a development build and a default-feature release build: capture is mov rcx,rbx; mov r8,r12; mov r9,r13; mov rsi,r14; mov rdx,r15 after those registers hold pid, constants, the pending mask and a loop counter.",
+      "NOT shown: any route that installs a handler; nothing was booted to exercise the hook."
+    ]
+  },
+  "remediation": "Take the callee-saved values from the frame saved at syscall.S:43-49 instead of reading live registers, or delete the unreachable install path.",
+  "status": "open"
+}
