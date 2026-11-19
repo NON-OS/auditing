@@ -1,0 +1,39 @@
+{
+  "id": "NKA-2026-026",
+  "severity": "informational",
+  "cvss": "CVSS:4.0/AV:L/AC:H/AT:P/PR:H/UI:N/VC:N/VI:N/VA:N/SC:N/SI:N/SA:N",
+  "affected": {
+    "release": true,
+    "main": false,
+    "commits": [
+      "b3dd1fa37ce2e32e3cb2f6a462081fefede4df40"
+    ]
+  },
+  "dates": {
+    "reported": "2026-11-19",
+    "published": "2026-11-19"
+  },
+  "title": "nonos-dev-attest is accepted beside nonos-production although three comments say it is refused",
+  "component": "kernel src/lib.rs, Cargo.toml, src/security/capsule_attest/path.rs",
+  "confidence": "confirmed",
+  "adversary": "A4",
+  "preconditions": [
+    "A make/cargo build that sets nonos-production and nonos-dev-attest without nonos-release"
+  ],
+  "location": "kernel:src/lib.rs:44-49; kernel:Cargo.toml:309,340-344,383; kernel:src/security/capsule_attest/path.rs:64-66,85-87; kernel:mk/55-dark-features.mk:30,51,56; kernel:tools/nix/config.nix:209,236-237",
+  "description": "The compile_error in lib.rs guards only nonos-release + nonos-dev-attest. nonos-production does not imply nonos-release, so production + dev-attest compiles, while Cargo.toml and path.rs say production refuses it. With dev-attest the spawn gate takes a path-only trailer without a STARK proof (path.rs:64-66).",
+  "impact": "A downstream or mistaken build can produce a kernel with the weaker capsule admission and no compiler refusal. On the nix path config.nix:236 and the loader's kernel signature check stop the pairing; those were not tested. Documentation/guard mismatch, no runtime attacker route.",
+  "scenario": [
+    "A builder sets nonos-production,nonos-dev-attest.",
+    "cargo check passes; the kernel admits capsules on path alone."
+  ],
+  "evidence": {
+    "reproduced": true,
+    "steps": [
+      "An independent check ran cargo check --no-default-features --features microkernel-core,nonos-production,nonos-dev-attest on b3dd1fa with a scratch signing seed in /tmp: exit 0 (Finished in 1m03s). Control with nonos-release,nonos-dev-attest: exit 101, error at src/lib.rs:45.",
+      "NOT run: a full build, a boot, or the loader's behaviour with a path-only kernel."
+    ]
+  },
+  "remediation": "Make lib.rs refuse nonos-dev-attest beside nonos-production unless a dev-only marker feature is present, or correct the three comments.",
+  "status": "open"
+}
