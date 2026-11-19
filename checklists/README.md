@@ -23,3 +23,5 @@ One checklist per workstream. Each item names a class of bug to look for. An ite
 | WS17 | [Trusted capsules](ws17-trusted-capsules.md) |
 | WS18 | [Fuzzing campaign](ws18-fuzzing.md) |
 | WS19 | [Open-source tool sweep](ws19-tool-sweep.md) |
+| WS20 | [Performance and worst-case cost](ws20-performance.md) |
+| WS21 | [Verification engineering](ws21-verification-engineering.md) |

@@ -11,7 +11,7 @@ Both are resolved to full commit hashes at the start by `scripts/resolve_targets
 
 ## What is audited
 
-![The 19 workstreams in five groups](media/diagram-audit-scope.svg)
+![The 21 workstreams in five groups](media/diagram-audit-scope.svg)
 
 Every directory of the kernel and the bootloader has an owning workstream, and each run records which files it read, traced or tested, so coverage can be measured and not assumed.
 
@@ -36,6 +36,8 @@ Every directory of the kernel and the bootloader has an owning workstream, and e
 | Trusted capsules in user space | WS17 | [ws17](../checklists/ws17-trusted-capsules.md) |
 | Fuzzing campaign | WS18 | [ws18](../checklists/ws18-fuzzing.md) |
 | Open-source tool sweep | WS19 | [ws19](../checklists/ws19-tool-sweep.md) |
+| Performance and worst-case cost | WS20 | [ws20](../checklists/ws20-performance.md) |
+| Verification engineering | WS21 | [ws21](../checklists/ws21-verification-engineering.md) |
 
 ## Out of scope
 

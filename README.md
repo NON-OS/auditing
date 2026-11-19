@@ -2,7 +2,7 @@
 
 A public security audit of the [NØNOS microkernel](https://github.com/NON-OS/microkernel): the method, the tools, the claims under test and every finding, published the day it is confirmed.
 
-**Status.** The audit started on 2026-11-17. The method, the tooling and the claims register are public, 19 workstreams run on a schedule, and nine findings are published, all open. [docs/status.md](docs/status.md) has the day's log and the numbers.
+**Status.** The audit started on 2026-11-17. The method, the tooling and the claims register are public, 21 workstreams run on a schedule, and nine findings are published, all open. [docs/status.md](docs/status.md) has the day's log and the numbers.
 
 This is a first-party audit, done by the project's own team. It is not independent and does not replace an independent audit. What it offers is that the method, the tools and the results are open to be checked.
 
@@ -19,7 +19,7 @@ Claude does the reading, the tool runs and the first write-up. People decide wha
 
 ## What is audited
 
-![The 19 workstreams in five groups: boot and trust, authority and isolation, hardware, secrets and network, the claims themselves, and tools and testing](docs/media/diagram-audit-scope.svg)
+![The 21 workstreams in five groups: boot and trust, authority and isolation, hardware, secrets and network, the claims themselves, and tools and testing](docs/media/diagram-audit-scope.svg)
 
 ## Who does what
 

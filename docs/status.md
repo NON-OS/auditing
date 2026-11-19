@@ -32,7 +32,7 @@ The audit moved from preparation to running on this date. In order:
 |---|---|---|
 | Scope, method, threat model, severity and disclosure rules | WS3, syscall layer and capabilities. WS1, the boot chain, started | The other 12 workstreams, which are scheduled |
 | System model with every citation checked | Refutation of the WS3 candidates, one reviewed so far | Refutation of candidates from other workstreams |
-| 19 workstream checklists | Running the project's own claim-checking tools on both targets | Verdicts on the claims |
+| 21 workstream checklists | Running the project's own claim-checking tools on both targets | Verdicts on the claims |
 | Claims register seeded with 26 public claims, none yet verified | | Explainers |
 | Tooling: citation, claims, finding, leak and commit checks, code metrics | | Dynamic testing and fuzzing |
 | The cloud environment, the lead, the refuter and the worker | | |

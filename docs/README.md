@@ -2,7 +2,7 @@
 
 ## What the audit examines
 
-- [Scope](scope.md): the targets, the 19 workstreams, what is out, the authorization and the rules.
+- [Scope](scope.md): the targets, the 21 workstreams, what is out, the authorization and the rules.
 - [System model](system-model.md): the kernel's security-relevant parts, where each lives, and which of the project's pages describes it.
 - [Threat model](threat-model.md): the five adversaries findings are ranked against.
 
