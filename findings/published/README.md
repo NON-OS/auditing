@@ -2,11 +2,13 @@
 
 Every finding of this audit is published here when it is confirmed, with its evidence, and updated when the maintainers fix it, accept the risk or dispute it. [docs/disclosure.md](../../docs/disclosure.md) has the rules.
 
-9 published: 9 open.
-By severity: 1 medium, 4 low, 4 informational.
+11 published: 11 open.
+By severity: 1 medium, 4 low, 6 informational.
 
 | ID | Title | Severity | Status | Published |
 |---|---|---|---|---|
+| [NKA-2026-031](NKA-2026-031.md) | Syscall-return signal hook captures rbx and r12-r15 from live registers three Rust frames deep (latent) | informational | open | 2026-11-19 |
+| [NKA-2026-026](NKA-2026-026.md) | nonos-dev-attest is accepted beside nonos-production although three comments say it is refused | informational | open | 2026-11-19 |
 | [NKA-2026-023](NKA-2026-023.md) | Committed image capability ceiling disagrees with the capsule catalogue; the project's own check fails at the tag | informational | open | 2026-11-18 |
 | [NKA-2026-021](NKA-2026-021.md) | PIE ELF with e_entry near 2^64 panics the kernel after mapping; RELRO page walk is unbounded under the global loader lock | low | open | 2026-11-18 |
 | [NKA-2026-020](NKA-2026-020.md) | ELF loader RELATIVE relocation stores 8 bytes through one frame; an unaligned r_offset writes into the physically next frame | medium | open | 2026-11-18 |
