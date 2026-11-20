@@ -2,11 +2,12 @@
 
 Every finding of this audit is published here when it is confirmed, with its evidence, and updated when the maintainers fix it, accept the risk or dispute it. [docs/disclosure.md](../../docs/disclosure.md) has the rules.
 
-12 published: 12 open.
-By severity: 1 medium, 4 low, 7 informational.
+13 published: 13 open.
+By severity: 1 medium, 4 low, 8 informational.
 
 | ID | Title | Severity | Status | Published |
 |---|---|---|---|---|
+| [NKA-2026-039](NKA-2026-039.md) | Counts and release state disagree across README, release notes, EVIDENCE.json and security pages | informational | open | 2026-11-20 |
 | [NKA-2026-038](NKA-2026-038.md) | sys::sync::SeqLock is a data race as written (Miri reports it); no caller | informational | open | 2026-11-20 |
 | [NKA-2026-031](NKA-2026-031.md) | Syscall-return signal hook captures rbx and r12-r15 from live registers three Rust frames deep (latent) | informational | open | 2026-11-19 |
 | [NKA-2026-026](NKA-2026-026.md) | nonos-dev-attest is accepted beside nonos-production although three comments say it is refused | informational | open | 2026-11-19 |

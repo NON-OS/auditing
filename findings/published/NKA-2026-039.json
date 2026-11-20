@@ -1,0 +1,38 @@
+{
+  "id": "NKA-2026-039",
+  "severity": "informational",
+  "cvss": "CVSS:4.0/AV:L/AC:H/AT:P/PR:H/UI:N/VC:N/VI:N/VA:N/SC:N/SI:N/SA:N",
+  "affected": {
+    "release": true,
+    "main": false,
+    "commits": [
+      "b3dd1fa37ce2e32e3cb2f6a462081fefede4df40"
+    ]
+  },
+  "dates": {
+    "reported": "2026-11-19",
+    "published": "2026-11-20"
+  },
+  "title": "Counts and release state disagree across README, release notes, EVIDENCE.json and security pages",
+  "component": "kernel README.md, docs/release/0.9.3.5.md, verification/evidence, docs/security",
+  "confidence": "confirmed",
+  "adversary": "A4",
+  "preconditions": [
+    "A reader relying on those documents"
+  ],
+  "location": "kernel:docs/release/0.9.3.5.md:1-6,41,83-85; kernel:README.md:17,220,369-371,390-393; kernel:verification/evidence/EVIDENCE.json; kernel:verification/evidence/collect-evidence.sh:13-15; kernel:nonos-data/trust/CEREMONY.md:43-45; kernel:docs/security/capsule-isolation-the-capability-check.md:20; kernel:docs/security/boot-chain-and-signatures.md:152,159",
+  "description": "The release notes call the tree a development BETA that is not the sealed release, while the tagged commit's subject is 'trust: seal 0.9.3.5'. README says 1,503 theorems (EVIDENCE 1,604), 222 proof crates (232), 67 driver capsules (catalogue 64 driver slugs), and release notes say 24 fuzz targets in CI (fuzz/targets.json lists 49). EVIDENCE.json bv_decide_calls is 23 against 10 when regenerated, and the script header's 'CI regenerates and diffs' is not wired. CEREMONY.md says Groth16 and 57 capsules (168 STARK trailers). Citations: docs/security cites a path that no longer exists and two line ranges past end of file.",
+  "impact": "Claim accuracy only.",
+  "scenario": [
+    "A reader relying on those documents"
+  ],
+  "evidence": {
+    "reproduced": true,
+    "steps": [
+      "git log/tag, grep counts, collect-evidence.sh run and diffed against EVIDENCE.json (one field differs), citation spot checks; independent rerun.",
+      "NOT done: Website text not checked; the full citation checker was not rerun."
+    ]
+  },
+  "remediation": "Generate the figures from EVIDENCE.json, wire the regeneration diff into CI, fix the citations.",
+  "status": "open"
+}
