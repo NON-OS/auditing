@@ -1,0 +1,41 @@
+{
+  "severity": "low",
+  "cvss": "CVSS:4.0/AV:L/AC:L/AT:N/PR:L/UI:N/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N",
+  "title": "JPEG DHT with a 255-entry length class aborts the image codec capsule (u8 loop counter overflow)",
+  "component": "kernel userland/toolkit JPEG decoder, capsule_image_codec",
+  "confidence": "confirmed",
+  "adversary": "A1",
+  "preconditions": [
+    "Ability to send OP_DECODE_JPEG to the image codec with a surface holding the file (whether an arbitrary capsule may reach the endpoint was not traced)"
+  ],
+  "location": "kernel:userland/toolkit/src/image/jpeg/dht/build_decode_tables.rs:24-29; kernel:userland/toolkit/src/image/jpeg/dht/parse_dht.rs:48-52; kernel:userland/capsule_image_codec/src/server/handlers/decode_sized.rs:30-66; kernel:userland/libc/src/panic.rs:41-47; kernel:src/userspace/init/supervisor/watch_rule.rs:58",
+  "description": "build_decode_tables runs 'let mut j = 1u8; while j <= t.bits[i] { ...; j += 1 }'. When bits[i] == 255 the condition is always true, so j overflows. parse_dht checks only that the total is at most 256 and that the bytes fit, so one class of 255 passes. With overflow checks the add panics; in a release profile (panic=abort, no overflow checks) j wraps, the output index passes 257 and the decoder panics with index out of bounds. The capsule's panic handler logs and exits with status 134.",
+  "impact": "A crafted JPEG ends the image codec capsule. The codec is on init's supervisor watch list, so a restart is likely, but the restart policy was not read. Nothing in the kernel is affected. A second caller of parse_dht (coef/state/header.rs:33) was not exercised.",
+  "scenario": [
+    "Build a JPEG: SOI, SOF0 8x8 one component, DHT class 0 id 0 with BITS[1]=255 and 255 zero values, EOI (294 bytes).",
+    "Send it with OP_DECODE_JPEG; decode_sized reaches the DHT after the header peek.",
+    "The decoder panics and the capsule exits."
+  ],
+  "evidence": {
+    "reproduced": true,
+    "steps": [
+      "Found by a libFuzzer + ASAN round on the image decode target; hand-built to a 294-byte input. On the host fuzz harness the input panics at build_decode_tables.rs:28 (attempt to add with overflow); the control with BITS[1]=254 and 254 values does not crash. Reproduced twice.",
+      "An independent check built the input from the description (byte-identical) and reproduced the same panic. It then called the real decode_sized in a release profile with panic=abort on stable rustc: the 255 input panicked at build_decode_tables.rs:26 with index out of bounds (len 257, index 257), exit 134; the 254 control returned Err(-90), exit 0.",
+      "NOT done: no booted kernel, no run in the capsule's own embedded build, no IPC or surface path, no supervisor restart observed."
+    ]
+  },
+  "remediation": "Reject bits[i] above the code space for length i in parse_dht, and loop with a wider counter or 'for _ in 0..bits[i]'.",
+  "id": "NKA-2026-043",
+  "affected": {
+    "release": true,
+    "main": false,
+    "commits": [
+      "b3dd1fa37ce2e32e3cb2f6a462081fefede4df40"
+    ]
+  },
+  "dates": {
+    "reported": "2026-11-20",
+    "published": "2026-11-20"
+  },
+  "status": "open"
+}
