@@ -1,0 +1,38 @@
+{
+  "id": "NKA-2026-038",
+  "severity": "informational",
+  "cvss": "CVSS:4.0/AV:L/AC:H/AT:P/PR:H/UI:N/VC:N/VI:N/VA:N/SC:N/SI:N/SA:N",
+  "affected": {
+    "release": true,
+    "main": false,
+    "commits": [
+      "b3dd1fa37ce2e32e3cb2f6a462081fefede4df40"
+    ]
+  },
+  "dates": {
+    "reported": "2026-11-19",
+    "published": "2026-11-20"
+  },
+  "title": "sys::sync::SeqLock is a data race as written (Miri reports it); no caller",
+  "component": "kernel src/sys/sync/seqlock",
+  "confidence": "confirmed",
+  "adversary": "A4",
+  "preconditions": [
+    "A future caller of SeqLock"
+  ],
+  "location": "kernel:src/sys/sync/seqlock/write.rs:28-38; kernel:src/sys/sync/seqlock/read.rs:26-37; kernel:src/sys/sync/seqlock/state.rs:20-32; kernel:src/sys/sync/mod.rs:38",
+  "description": "write stores an odd sequence with Release then does a plain data store, which may move above it; read copies the data non-atomically while a writer may run; write is a safe fn although writers must be serialised by the caller, and the type is Sync. No code outside the module uses it (the clock page has its own seqlock). Only the sequence arithmetic is covered by proofs.",
+  "impact": "No effect today. A future caller could read a torn value, or race two writers from safe code.",
+  "scenario": [
+    "A future caller of SeqLock"
+  ],
+  "evidence": {
+    "reproduced": true,
+    "steps": [
+      "Host harness including the unmodified seqlock files; cargo miri run (reader): Undefined Behavior, data race between non-atomic read and write; (two-writers): data race between two non-atomic writes. An independent check reproduced both reports.",
+      "NOT done: No native torn-read demonstration on hardware."
+    ]
+  },
+  "remediation": "Make write unsafe or lock internally; copy data with atomic or volatile loads; fence after the odd store.",
+  "status": "open"
+}
