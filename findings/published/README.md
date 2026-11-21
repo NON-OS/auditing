@@ -2,11 +2,12 @@
 
 Every finding of this audit is published here when it is confirmed, with its evidence, and updated when the maintainers fix it, accept the risk or dispute it. [docs/disclosure.md](../../docs/disclosure.md) has the rules.
 
-14 published: 14 open.
-By severity: 1 medium, 5 low, 8 informational.
+15 published: 15 open.
+By severity: 1 medium, 5 low, 9 informational.
 
 | ID | Title | Severity | Status | Published |
 |---|---|---|---|---|
+| [NKA-2026-046](NKA-2026-046.md) | stark-attest aggregate verifier: a header depth of 65 or more makes a shift overflow and panics in overflow-checked builds | informational | open | 2026-11-21 |
 | [NKA-2026-043](NKA-2026-043.md) | JPEG DHT with a 255-entry length class aborts the image codec capsule (u8 loop counter overflow) | low | open | 2026-11-20 |
 | [NKA-2026-039](NKA-2026-039.md) | Counts and release state disagree across README, release notes, EVIDENCE.json and security pages | informational | open | 2026-11-20 |
 | [NKA-2026-038](NKA-2026-038.md) | sys::sync::SeqLock is a data race as written (Miri reports it); no caller | informational | open | 2026-11-20 |
