@@ -1,0 +1,42 @@
+{
+  "id": "NKA-2026-049",
+  "title": "vfs OP_DIRSTAT on an ancestor directory counts the guarded /linux-home and /linux-private trees for a caller without ForeignExec",
+  "component": "userland capsule_vfs fs_gate and dirstat handler",
+  "severity": "low",
+  "confidence": "confirmed",
+  "adversary": "A1",
+  "preconditions": [
+    "Hostile or compromised capsule holding FileSystem (bit 6) but not ForeignExec (bit 32)",
+    "Guarded trees exist in the vfs store (the Linux personality capsule creates /linux-home/<key> and /linux-private through vfs)"
+  ],
+  "affected": {
+    "release": true,
+    "main": false,
+    "main_checked": false,
+    "commits": [
+      "b3dd1fa37ce2e32e3cb2f6a462081fefede4df40"
+    ]
+  },
+  "location": "kernel:userland/capsule_vfs/src/server/fs_gate/reach.rs:31-43; kernel:userland/capsule_vfs/src/server/fs_gate/guard.rs:77-92; kernel:userland/capsule_vfs/src/server/fs_gate/paths.rs:34-36; kernel:userland/capsule_vfs/src/server/handlers/dirstat.rs:29-55; kernel:userland/capsule_vfs/src/store/fdtable/dirstat.rs:21-53",
+  "cvss": "CVSS:4.0/AV:L/AC:L/AT:N/PR:L/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N",
+  "description": "For OP_DIRSTAT the gate checks the named path with guarded() only. whole-tree checking (touches(), which also covers ancestors) applies only to OP_COPY and OP_RMDIR. guarded() is false for \"/\", so OP_DIRSTAT of \"/\" (or \"//\", \"/./\") is admitted. The handler sums every file under the prefix and does not skip guarded nodes, unlike the list, search and journal handlers. The reply carries file count, directory count and total bytes. Subtracting dirstat of the non-guarded top-level trees from dirstat(\"/\") gives the exact counts and byte total of the guarded trees. Names and content are not returned.",
+  "impact": "Metadata disclosure only: existence, number and total size of files in the Linux personality's private trees, and when they change. Same family as the OP_SEARCH oracle in NKA-2026-015, with less content. Needs a hostile or compromised FileSystem holder without ForeignExec.",
+  "scenario": [
+    "Attacker sends OP_DIRSTAT for \"/\" and for each top-level tree it may see.",
+    "The difference in files, dirs and bytes is the guarded trees' totals.",
+    "Repeating over time shows when the Linux guest writes."
+  ],
+  "evidence": {
+    "reproduced": true,
+    "steps": [
+      "Host harness mounting the audited gate, path-normalisation and dirstat files unmodified, with a minimal store (/docs 10 B; /linux-home/.../wallet.dat 777 B; /linux-private/run1/k 31 B) and a caller without ForeignExec. Two independent runs. dirstat(\"/\") admitted and returned (3 files, 6 dirs, 818 B); dirstat(\"/docs\") returned (1, 0, 10); 818-10 = 808 = 777+31. dirstat(\"/linux-home\") and \"/linux-private\" refused. OP_COPY of \"/\" is refused by the same gate.",
+      "NOT run: inside a booted vfs capsule; the store is a simplified model, the gate and dirstat code are the production files. Streamed files were not tested (their bytes may be counted differently). Whether OP_STAT of \"/\" or OP_USAGE show the same was not tested. Main branch not examined."
+    ]
+  },
+  "remediation": "Use the whole-tree check (touches()) for OP_DIRSTAT, or have the dirstat handler skip guarded nodes when the caller lacks ForeignExec, and add a regression test that dirstat of \"/\" equals the sum of the visible trees.",
+  "dates": {
+    "reported": "2026-11-21",
+    "published": "2026-11-22"
+  },
+  "status": "open"
+}
