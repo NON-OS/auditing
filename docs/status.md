@@ -37,7 +37,7 @@ The audit moved from preparation to running on this date. In order:
 | Tooling: citation, claims, finding, leak and commit checks, code metrics | | Dynamic testing and fuzzing |
 | The cloud environment, the lead, the refuter and the worker | | |
 
-Fifteen findings are published, all open, each independently reproduced: see [findings/published](../findings/published/README.md). Other candidates stay private until they are reproduced.
+Sixteen findings are published, all open, each independently reproduced: see [findings/published](../findings/published/README.md). Other candidates stay private until they are reproduced.
 
 ## First measured result: the project's docs drift from its code
 
