@@ -1,0 +1,33 @@
+{
+  "id": "NKA-CLOSED-2026-016",
+  "title": "A known timing-safety advisory in a cryptographic dependency does not apply to the code path the kernel's key-decapsulation actually uses",
+  "component": "post-quantum key-decapsulation dependency chain",
+  "claim": "A candidate found that a cryptographic utility library at the version pinned by the kernel's dependency tree is subject to a published timing-safety advisory, and that the kernel's hybrid key-decapsulation routine depends on it, raising a secret-dependent-timing concern.",
+  "location": "kernel's key-decapsulation code and its cryptographic dependency chain",
+  "affected": {
+    "release": true,
+    "main": false,
+    "main_checked": false,
+    "commits": [
+      "b3dd1fa37ce2e32e3cb2f6a462081fefede4df40"
+    ]
+  },
+  "why_not_a_finding": "The advisory and the affected version pin are both real, but the specific operations the advisory names are not the ones the kernel's decapsulation path actually exercises. Source-level tracing of the one constant-time operation on the decapsulation path showed it resolves to a different, unaffected implementation than the flagged functions, and a targeted disassembly of the compiled code for that exact operation shape showed no data-dependent branch, only a fixed-length loop whose only conditional jump is the loop counter. The advisory's other affected case applies only to 32-bit targets, and every target the kernel builds for is 64-bit.",
+  "routes_tried": [
+    "Traced the exact sequence of library calls the decapsulation routine's implicit-rejection step uses, down to the specific internal functions invoked for the array comparison and conditional-select operations involved.",
+    "Confirmed those specific internal functions resolve to a different, separately-versioned dependency not covered by the advisory, rather than to the flagged constant-time mask generators.",
+    "Checked the advisory's other affected case, certain comparisons on 32-bit targets: every build target in the kernel's tree is 64-bit, so this case does not apply.",
+    "Compiled the exact operation shape used on the decapsulation path in isolation and disassembled it, confirming the generated code is a fixed-length loop with no branch on secret data, only on the loop counter."
+  ],
+  "evidence": {
+    "checked_independently": true,
+    "steps": [
+      "Built a standalone, minimal reproduction of the exact call shape used on the decapsulation path, using the kernel's pinned dependency versions, and disassembled the resulting compiled code.",
+      "Did not disassemble the entire decapsulation routine beyond this specific operation, and did not rerun statistical timing measurements beyond those already available."
+    ]
+  },
+  "dates": {
+    "reported": "2026-11-20",
+    "closed": "2026-11-23"
+  }
+}
