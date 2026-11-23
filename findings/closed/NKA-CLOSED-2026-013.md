@@ -1,0 +1,33 @@
+# NKA-CLOSED-2026-013: No route was found for a debug exception to interrupt the kernel's syscall entry on the hardware tested
+
+**Closed.** A candidate checked and refuted by a second, independent reviewer.
+
+| | |
+|---|---|
+| Component | kernel syscall-entry assembly and processor debug-exception handling |
+| Location | kernel syscall-entry assembly; interrupt and debug-exception handling code; syscall return path's flag masking |
+| Affected | release yes, main not checked, tested at b3dd1fa37ce2 |
+| Reported | 2026-11-20 |
+| Closed | 2026-11-23 |
+
+## The claim
+
+A candidate raised the possibility that a pending debug exception, delivered at the very first instruction of the kernel's syscall-entry code before a safety step runs, could crash or destabilize the kernel, reachable by an unprivileged sandboxed process through either a hardware breakpoint or a single-step flag carried across the syscall instruction.
+
+## Why it is not a finding
+
+The hardware-breakpoint route is closed by code: nothing in the kernel ever arms a hardware breakpoint register, and an unprivileged process has no instruction that could. The single-step route was tested directly on real virtualized hardware and the processor did not deliver a single-step trap at the syscall-entry instruction in either of the two triggering configurations tried, consistent with the syscall-return path's own flag masking clearing the single-step flag before it could matter. The underlying code-level concern, that an early kernel-mode debug exception taken with the wrong saved-segment assumption would be unsafe, is not disputed and is kept as a hardening note.
+
+## Routes tried
+
+1. Searched the full kernel source for any code that writes to the hardware debug-breakpoint registers: none found. Writing those registers requires full kernel privilege, which no sandboxed process has.
+2. Traced the kernel's syscall-related flag handling and confirmed the single-step flag is included in the set of flags the processor itself clears when entering through the syscall instruction, and that the kernel's own return path also clears it from the value given back to user mode.
+3. Built and ran a live test program under a virtualized Linux guest on real hardware, attempting both a plain single-step-across-syscall sequence and the same sequence preceded by the specific instruction ordering known to cause related issues on other kernels: in both cases, over 100,000 iterations, no debug trap was observed at the syscall-entry instruction itself.
+4. Confirmed the test actually exercised a real syscall entry on the guest's own kernel, not an emulated or intercepted path.
+
+## Evidence
+
+Checked independently of the original write-up: yes.
+
+- A standalone C test harness was built and run in a virtualized guest on real hardware (a hypervisor-flagged Intel processor), 100,000 iterations per configuration, with trap addresses recorded by a signal handler.
+- Other processor vendors and bare-metal (non-virtualized) hardware were not tested. The test ran against a general-purpose Linux guest kernel, not the project's own kernel, since no bootable image was available in this environment; the project's own syscall-entry flag masking was confirmed by source reading to work the same way.
