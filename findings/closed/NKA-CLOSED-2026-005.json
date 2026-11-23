@@ -1,0 +1,33 @@
+{
+  "id": "NKA-CLOSED-2026-005",
+  "title": "Unauthenticated time-sync capsule is not present in any image profile the project builds",
+  "component": "network time synchronization capsule and its inclusion in build profiles",
+  "claim": "A candidate suspected that an unauthenticated network time-sync capsule, fed by an unauthenticated protocol, could move the kernel's trusted clock within its allowed range and that a network attacker could exploit this to affect certificate-validity checks that read the clock.",
+  "location": "build-profile feature configuration; kernel clock-adjustment syscall; certificate-validity check code",
+  "affected": {
+    "release": true,
+    "main": false,
+    "main_checked": false,
+    "commits": [
+      "b3dd1fa37ce2e32e3cb2f6a462081fefede4df40"
+    ]
+  },
+  "why_not_a_finding": "The network attacker the candidate needs has no server to attack in any image the project actually builds. A full feature-closure computation over every shipped build profile shows the time-sync capsule is absent from every GUI, server, and capsule-only profile; it exists only in a narrow developer smoke-test configuration that nothing in the build tooling actually produces as a shippable image. The underlying kernel mechanism (a clock that can move anywhere within a wide, multi-decade range with no step bound) is real and is kept as a separate hardening observation, not scored as this candidate's finding, since it needs a different, non-network precondition (control of an already-trusted clock-setting capability).",
+  "routes_tried": [
+    "Computed the full feature closure for every build profile the project's own build configuration defines and confirmed the time-sync capsule is excluded from all of them.",
+    "Checked whether the capsule could be spawned even if compiled in: its spawn path is compiled out entirely whenever the standard network stack feature is present, which every real profile has.",
+    "Searched for any other source of trusted time in a shipped image: none besides the excluded capsule and a user-facing clock-setting capsule with no network input.",
+    "Reviewed how the kernel's clock-adjustment syscall and certificate-validity checks actually use the clock, to state the residual accurately."
+  ],
+  "evidence": {
+    "checked_independently": true,
+    "steps": [
+      "An independent feature-closure computation was run over the project's own build-profile configuration file to confirm the capsule's exclusion from every shipped profile.",
+      "Searched the full source tree for any other caller of the clock-adjustment syscall besides the excluded capsule and the user clock-setting capsule."
+    ]
+  },
+  "dates": {
+    "reported": "2026-11-17",
+    "closed": "2026-11-23"
+  }
+}
