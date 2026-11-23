@@ -1,0 +1,43 @@
+{
+  "id": "NKA-2026-008",
+  "title": "IPC TOTAL_BYTES_MAX (96 MiB) is not tied to free heap and one capsule can fill it using its own threads, refusing all IPC system-wide",
+  "component": "kernel ipc nonos_inbox budget, IPC send path",
+  "severity": "medium",
+  "confidence": "confirmed",
+  "adversary": "A1",
+  "preconditions": [
+    "Hostile capsule holding the IPC bit",
+    "Ability to spawn several threads (see NKA-2026-006)",
+    "Halt variant only: machine RAM of about 256 MiB or less (hypothesis)"
+  ],
+  "affected": {
+    "release": true,
+    "main": false,
+    "commits": [
+      "b3dd1fa37ce2e32e3cb2f6a462081fefede4df40"
+    ]
+  },
+  "location": "kernel:src/ipc/nonos_inbox/budget.rs:23-43,71-86; kernel:src/services/registry/peers_inbox.rs:25-65; kernel:src/syscall/microkernel/ipc/send_caps_inbox.rs:25-37; kernel:src/syscall/microkernel/ipc/send_to_pid.rs:32-53; kernel:src/memory/heap/constants.rs:30-45",
+  "cvss": "CVSS:4.0/AV:L/AC:L/AT:N/PR:L/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N",
+  "description": "All inboxes together may hold 96 MiB, checked against nothing about free heap. A thread has its own inbox proc.<tid> that serves no endpoint, so MkIpcSendToPid from a sibling thread passes the gates (empty endpoint set passes inbox_admits). With about 12 (inbox, sender) pairs of 8 MiB shares, 96 messages of 1 MiB reach the total. The parked thread never reads, so the bytes stay. admit applies the total to the kernel's own sends too.",
+  "impact": "System-wide IPC refusal (kernel-to-capsule traffic such as crypto, vfs, block returns BUSY) for as long as the threads live. On a machine with RAM <= 256 MiB the heap is 96 MiB, so the budget can take the whole heap and the OOM path powers off (hypothesis; not shown).",
+  "scenario": [
+    "Capsule spawns about 12 threads that never read their inboxes.",
+    "One sender sends large messages to each sibling inbox until the per-(inbox, sender) share and then the 96 MiB system total are reached.",
+    "Large-message sends then fail system-wide with QueueFull; very small messages can still pass until the last few hundred KB of headroom are also used."
+  ],
+  "evidence": {
+    "reproduced": true,
+    "steps": [
+      "A host model built against the real budget.rs reached 99.6 MB of 100.7 MB over 12 inboxes; confirmed by an independent code reading.",
+      "Reproduced on a booted kernel: one process, using 12 sibling thread inboxes that are never drained, drove each inbox to its 8 MiB per-sender share (8 large sends each, 96 sends total, about 95.6 MiB), after which a further large send to a fresh inbox from the same or a different sender was refused (rc=-16) while the total held. One-byte sends were still accepted afterward, using the remaining headroom (roughly 0.4 MiB) before also failing; so large-message IPC is refused system-wide well before the stated 96 MiB is literally exhausted by every message size.",
+      "The heap-exhaustion halt named in preconditions as a hypothesis was not reached in this test (8 GiB guest); it remains untested. Whether a killed capsule's bytes are freed by the reaper was not checked."
+    ]
+  },
+  "remediation": "Tie the total to a fraction of free heap, add a per-process-group byte cap across inboxes, and refuse sends into inboxes whose owner is the sender's own group beyond a small bound.",
+  "dates": {
+    "reported": "2026-11-18",
+    "published": "2026-11-23"
+  },
+  "status": "open"
+}

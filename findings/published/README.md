@@ -2,11 +2,15 @@
 
 Every finding of this audit is published here when it is confirmed, with its evidence, and updated when the maintainers fix it, accept the risk or dispute it. [docs/disclosure.md](../../docs/disclosure.md) has the rules.
 
-16 published: 16 open.
-By severity: 1 medium, 6 low, 9 informational.
+20 published: 20 open.
+By severity: 2 medium, 8 low, 10 informational.
 
 | ID | Title | Severity | Status | Published |
 |---|---|---|---|---|
+| [NKA-2026-030](NKA-2026-030.md) | With no IOMMU unit in service, standard and server images let a claimed PCI device DMA to all RAM | informational | open | 2026-11-23 |
+| [NKA-2026-009](NKA-2026-009.md) | MkKill and MkExit end one task only: sibling threads of a killed capsule keep running with its capabilities and its parent cannot kill them | low | open | 2026-11-23 |
+| [NKA-2026-008](NKA-2026-008.md) | IPC TOTAL_BYTES_MAX (96 MiB) is not tied to free heap and one capsule can fill it using its own threads, refusing all IPC system-wide | medium | open | 2026-11-23 |
+| [NKA-2026-007](NKA-2026-007.md) | IPC inbox count limit has no sender term: one sender can fill all 1024 slots of any inbox it may message, contradicting the documented half-inbox bound | low | open | 2026-11-23 |
 | [NKA-2026-049](NKA-2026-049.md) | vfs OP_DIRSTAT on an ancestor directory counts the guarded /linux-home and /linux-private trees for a caller without ForeignExec | low | open | 2026-11-22 |
 | [NKA-2026-046](NKA-2026-046.md) | stark-attest aggregate verifier: a header depth of 65 or more makes a shift overflow and panics in overflow-checked builds | informational | open | 2026-11-21 |
 | [NKA-2026-043](NKA-2026-043.md) | JPEG DHT with a 255-entry length class aborts the image codec capsule (u8 loop counter overflow) | low | open | 2026-11-20 |
