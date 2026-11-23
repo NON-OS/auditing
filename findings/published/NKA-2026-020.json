@@ -2,12 +2,12 @@
   "id": "NKA-2026-020",
   "title": "ELF loader RELATIVE relocation stores 8 bytes through one frame; an unaligned r_offset writes into the physically next frame",
   "component": "kernel ELF loader src/elf/loader/core/relocate.rs",
-  "severity": "medium",
+  "severity": "high",
   "confidence": "confirmed",
   "adversary": "A4",
   "preconditions": [
     "Capsule must pass the spawn gate: publisher-tier capsule with a vendor-issued publisher certificate, signed manifest and an attestation under the vendor root or a root the person enrolled (kernel:src/kernel_core/process_spawn/capsule_spawn/runner/tier.rs:20-26, attest_gate.rs:19-30)",
-    "Chain to a forged page-table entry rests on frame adjacency, not shown on a kernel"
+    "Chain to a forged page-table entry is now reproduced on a booted kernel using the project's own vendor-enrolled capsule in a development image signed with throwaway keys; the publisher-certificate gate on a release build was not exercised"
   ],
   "affected": {
     "release": true,
@@ -17,9 +17,9 @@
     ]
   },
   "location": "kernel:src/elf/loader/core/relocate.rs:96-108; kernel:src/elf/loader/core/writable.rs:42-47; kernel:src/memory/paging/manager/mapping/translate_in_asid.rs:58; kernel:src/elf/loader/core/load_segment/populate_page.rs:38; kernel:src/memory/phys/allocator/alloc.rs:49-60",
-  "cvss": "CVSS:4.0/AV:L/AC:H/AT:P/PR:H/UI:A/VC:L/VI:H/VA:L/SC:N/SI:N/SA:N",
+  "cvss": "CVSS:4.0/AV:L/AC:H/AT:P/PR:H/UI:A/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N",
   "description": "apply_relative_relocations checks r_offset only against the writable PT_LOAD range in virtual terms, translates one address, and does one 8-byte store at DIRECTMAP_BASE+pa. With (r_offset & 0xfff) > 0xff8 the store crosses the end of the physical frame into whichever frame follows. Value is base + r_addend, both chosen by the ELF. No alignment or page-crossing check exists on the x86_64 user path (the aarch64 boot relocator has one: kernel:src/arch/aarch64/boot/relocate/apply.rs:49). The next-fit allocator hands out ascending frames and populate_page allocates the data frame before the page-table frame, so a table frame can follow the data frame (traced, not run).",
-  "impact": "Primitive reproduced on host: up to 7 bytes of attacker-chosen data written into another frame (in the test, the read-only segment page). If the next frame is a page table or another process's frame, kernel-controlled memory is written, which would be a user-controlled PTE (High). Only reachable by an enrolled third-party capsule's author; not by A1 without a publisher certificate, not by A2.",
+  "impact": "Primitive reproduced on host and, independently, on a booted kernel: a capsule forged its own page-table entry to point at a physical frame of its own choosing and used that mapping for both a user-mode write and a read, confirmed from outside the guest. Rated High rather than Critical because the precondition is an admitted capsule already enrolled by the vendor, not an arbitrary unauthenticated attacker; not reachable by A1 without a publisher certificate, not by A2.",
   "scenario": [
     "Author builds a PIE or ET_EXEC capsule with a writable multi-page PT_LOAD and a RELATIVE entry at r_offset page_start+0xffc or +0xfff.",
     "The capsule is published and enrolled; the loader runs the relocation after mapping the segment.",
@@ -30,13 +30,18 @@
     "steps": [
       "Host harness with the kernel's src/elf copied unmodified and stubs for memory, paging and SMP, built and run twice, independently: aligned 0x1ff8 writes frame61 only; straddle 0x1ffc writes 4 bytes into frame62 (the physically next frame) and returns Ok. The harness needed three small glue fixes to compile; none touches kernel code.",
       "A model of the allocator and page-table steps, which is not the kernel's code, produced a forged PT[0]=0x12345007. It shows the chain is plausible, and is not evidence that it happens in a running kernel.",
-      "NOT run: any boot, the real allocator adjacency, whether the direct map of the next frame is writable, main."
+      "A later, fuller run of the same host harness measured frame adjacency directly: for the first page of a writable segment that starts a fresh 2 MiB region, the page-table frame is the one directly after the data frame. An image with one relocation entry at the last 8 bytes of such a page loaded with success and left a present, writable, user page-table entry pointing at a frame the image chose; the kernel's own address-translation code resolved the capsule's address to that frame. At a fresh 1 GiB or 512 GiB boundary the same store instead forges a huge page-table leaf. A second, aligned relocation entry in the now-forged page lets the loader store a chosen 8-byte value into the chosen frame during the load, before the capsule runs. Tearing down the address space frees the chosen frame back to the allocator while its first owner still holds a reference to it, and when the frame after the data frame belongs to another owner, chosen bytes land at the start of that owner's frame.",
+      "Traced, not run at this point: the kernel builds its own page tables through the same read-write mapping of all physical memory that the loader's direct-map store uses, so a store into a page-table frame through that mapping is expected to land rather than fault.",
+      "Reproduced independently, afterward, on a booted kernel under KVM, confirmed from outside the guest with the hypervisor's monitor: at single-CPU, both targeted 2 MiB regions were forged. A capsule-chosen physical frame was installed as the capsule's own page-table entry (present, writable, user, accessed/dirty bits set by the CPU); a user-mode write through that mapping landed at the chosen physical address, and a direct physical read confirmed the capsule's marker value. The capsule's real data frame for that page was left unmapped.",
+      "At four CPUs across two further runs, the exact page-table forge was timing-dependent (achieved in one of two targeted regions in one run, zero of two in the other), but in every run a large majority of the straddling writes still landed in frames the capsule does not own (as high as 969 of 1024 entries). The kernel did not panic in any run; the loader returned success each time.",
+      "This independent check used the project's own vendor-enrolled capsule rather than an outside author's, and the publisher-certificate gate on a release build was not exercised. Reading another process's named memory and patching kernel text were not attempted in this check. Only 4 GiB of memory was tested; above 4 GiB the untouched high half of the forged entry would carry the data frame's upper address bits. main, aarch64 and riscv64 were not tested."
     ]
   },
   "remediation": "Reject r_offset with (r_offset & 7) != 0 or crossing a page; or write byte-wise through per-page translation; apply the same check to every direct-map store in the loader.",
   "dates": {
     "reported": "2026-11-18",
-    "published": "2026-11-18"
+    "published": "2026-11-18",
+    "updated": "2026-11-23"
   },
   "status": "open"
 }
