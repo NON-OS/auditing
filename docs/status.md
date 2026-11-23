@@ -26,15 +26,36 @@ The audit moved from preparation to running on this date. In order:
 5. Five more findings were confirmed by two independent reproductions and published.
 6. Builds of a development image of the audited commit are in progress, so that tests can run inside the kernel.
 
+## What happened on 2026-11-19
+
+1. Two more workstreams were added: performance engineering (WS20) and verification engineering (WS21), bringing the audit to its full 21 workstreams.
+2. Two more findings were confirmed by two independent reproductions and published: NKA-2026-026 and NKA-2026-031.
+
+## What happened on 2026-11-20
+
+1. Three more findings were confirmed and published: NKA-2026-038, NKA-2026-039 and NKA-2026-043.
+2. Builds of a development image of the audited commit reached a state that boots under emulation, which lets later work run tests inside a running kernel rather than only read and trace the source.
+
+## What happened on 2026-11-21
+
+1. One more finding was confirmed and published: NKA-2026-046.
+2. Workstreams that had not yet produced a coverage record began to.
+
+## What happened on 2026-11-22
+
+1. One more finding was confirmed and published: NKA-2026-049, bringing the total to sixteen.
+2. The fuzzing campaign (WS18) completed its first full pass over every shipped target: all 84 build and ran, each for at least two hours, about 480 target-hours in total. Every crash it found was triaged: each is either the cause behind an existing finding or does not reproduce.
+3. Some findings that have been reproduced once on a booted development image still need an independent second reproduction, on the same kind of system, before the audit sets their final severity. That review is scheduled and not yet done.
+
 ## Where the audit stands
 
 | Done | In progress | Not started |
 |---|---|---|
-| Scope, method, threat model, severity and disclosure rules | WS3, syscall layer and capabilities. WS1, the boot chain, started | The other 12 workstreams, which are scheduled |
-| System model with every citation checked | Refutation of the WS3 candidates, one reviewed so far | Refutation of candidates from other workstreams |
-| 21 workstream checklists | Running the project's own claim-checking tools on both targets | Verdicts on the claims |
-| Claims register seeded with 26 public claims, none yet verified | | Explainers |
-| Tooling: citation, claims, finding, leak and commit checks, code metrics | | Dynamic testing and fuzzing |
+| Scope, method, threat model, severity and disclosure rules | All 21 workstreams running on a schedule | Verdicts on all 26 public claims |
+| System model with every citation checked | Refutation of candidates as workstreams produce them | Independent second reproduction of some booted-system findings |
+| 21 workstream checklists | A development image boots under emulation; dynamic, in-kernel testing is starting | Explainers |
+| Claims register seeded with 26 public claims, none yet verified | Fuzzing campaign (WS18): first full pass over all 84 targets complete, about 480 target-hours | Fixing the stale documentation citations found on 2026-11-17 |
+| Tooling: citation, claims, finding, leak and commit checks, code metrics | | |
 | The cloud environment, the lead, the refuter and the worker | | |
 
 Sixteen findings are published, all open, each independently reproduced: see [findings/published](../findings/published/README.md). Other candidates stay private until they are reproduced.
@@ -56,7 +77,8 @@ What this does and does not show. It is a documentation result, not a vulnerabil
 
 ## What is next
 
-1. Finish refuting the WS3 candidates.
-2. Read what each newly started workstream produces before changing the schedule.
-3. Run the project's claim-checking tools on both targets and keep the output.
-4. Fix the stale citations in the project's documentation.
+1. Schedule and complete the independent second reproduction of findings so far confirmed only on a booted development image.
+2. Keep refuting candidates from every active workstream.
+3. Widen dynamic testing on the booted development image: an in-kernel test suite for syscalls, IPC and scheduling, beyond what has run so far.
+4. Run the project's claim-checking tools on both targets and keep the output.
+5. Fix the stale citations in the project's documentation.
