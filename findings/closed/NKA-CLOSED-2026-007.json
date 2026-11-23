@@ -1,0 +1,33 @@
+{
+  "id": "NKA-CLOSED-2026-007",
+  "title": "Non-reseeded randomness between draws gives a VM-snapshot adversary no capability beyond what the snapshot already provides",
+  "component": "kernel-wide pseudorandom generator reseed interval",
+  "claim": "A candidate suspected that the kernel's randomness generator, which reseeds only periodically rather than on every draw, would let an adversary who can snapshot, restore, and clone a virtual machine observe repeated random output across clones, and that this was a usable weakness.",
+  "location": "kernel global randomness generator reseed logic; data-volume per-sector random nonce generation",
+  "affected": {
+    "release": true,
+    "main": false,
+    "main_checked": false,
+    "commits": [
+      "b3dd1fa37ce2e32e3cb2f6a462081fefede4df40"
+    ]
+  },
+  "why_not_a_finding": "The mechanism is real, two clones resumed from one snapshot do draw identical random bytes until the next reseed, but the adversary the candidate names already holds the full memory image at the moment of snapshot, which already includes the storage key that matters more than any random nonce. Reusing a nonce gives that adversary no capability beyond what possessing the snapshot already gives. The one case where nonce reuse would add real information, an adversary who sees two cloned disks but never the memory image, falls outside every adversary this project's own threat model defines.",
+  "routes_tried": [
+    "Checked what the stated adversary already has: full access to the virtual machine's memory at the point of snapshot, which already includes the long-lived storage key.",
+    "Checked whether the same weakness helps a different adversary who cannot snapshot another instance at all: that adversary has no way to reach two correlated outputs in the first place.",
+    "Checked whether a network observer of two cloned instances could exploit correlated randomness in session key material: the relevant cryptographic operations do not consume randomness in a way that would leak secrets from repeated values, and session establishment mixes the remote peer's own fresh randomness.",
+    "Identified the one adversary shape that would gain something, disk-only access to two clones without ever seeing the memory image, and confirmed it is not one of the adversaries this project's threat model defines."
+  ],
+  "evidence": {
+    "checked_independently": true,
+    "steps": [
+      "Independently traced the reseed interval and per-draw code path to confirm the described behavior.",
+      "No virtual machine snapshot or clone was actually performed; this was a code-reading review."
+    ]
+  },
+  "dates": {
+    "reported": "2026-11-18",
+    "closed": "2026-11-23"
+  }
+}
