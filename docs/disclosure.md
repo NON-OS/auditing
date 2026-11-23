@@ -31,8 +31,15 @@ An open finding is readable by anyone, including people who would use it. The au
 
 ### What stays private
 
-- Candidates that are not yet findings: hypotheses, and candidates the second reviewer refuted. The audit reports how many there were and why they were dropped.
+- Hypotheses: a lead not yet resolved either way. Not a finding, not a closed case, not scored.
 - Anything the leak guard rejects: keys, tokens, identifiers of an account, a chat or a session, and the addresses of real hosts.
+
+### What is published, but is not a finding
+
+A candidate a second, independent reviewer checked and refuted is a closed case, not a finding: nothing
+there is a vulnerability. It is published anyway, with the reasoning and the routes tried to break it,
+so the record shows what was checked and ruled out and not only what was confirmed. See
+[`findings/closed/`](../findings/closed/README.md).
 
 ### Statuses of a published finding
 

@@ -26,7 +26,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SKIP_DIRS = {".git", "private"}
 KEY_NAMES = re.compile(r"\.(pem|key|seed|p12|pfx|jks|keystore)$|^\.env(\..*)?$|signing_key", re.I)
-ALLOWED_FINDINGS = ("findings/schema/", "findings/published/", "findings/README.md", "findings/TEMPLATE.md")
+ALLOWED_FINDINGS = ("findings/schema/", "findings/published/", "findings/README.md", "findings/TEMPLATE.md",
+                    "findings/TEMPLATE-closed.md", "findings/closed/")
 
 ID_PREFIXES = "sesn|agent|memstore|env|depl|vlt|vault|wfrun|file|msgbatch"
 UUID = r"\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"

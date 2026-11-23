@@ -13,6 +13,8 @@ links:
 findings:
 	$(PYTHON) scripts/validate_findings.py
 	$(PYTHON) scripts/render_findings.py --check
+	$(PYTHON) scripts/validate_closed_cases.py
+	$(PYTHON) scripts/render_closed_cases.py --check
 
 claims:
 	$(PYTHON) scripts/validate_claims.py
