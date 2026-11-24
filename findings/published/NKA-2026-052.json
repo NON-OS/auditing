@@ -1,0 +1,42 @@
+{
+  "id": "NKA-2026-052",
+  "title": "The demand-paging budget is charged per thread rather than per capsule, so a capsule with multiple threads can demand-fill memory well past the stated limit without ever holding the Memory capability",
+  "component": "kernel memory paging, demand-fault path",
+  "severity": "low",
+  "confidence": "confirmed",
+  "adversary": "A1",
+  "preconditions": [
+    "Capsule holds the IPC capability, which MkThreadSpawn requires. The Memory capability is not required: the demand-fault path does not check it."
+  ],
+  "affected": {
+    "release": true,
+    "main": false,
+    "commits": [
+      "b3dd1fa37ce2e32e3cb2f6a462081fefede4df40"
+    ]
+  },
+  "location": "kernel:src/memory/paging/manager/faults/demand.rs:33,56; kernel:src/memory/paging/manager/faults/demand_cap.rs:17-92; kernel:src/process/core/table/current_pid.rs:19-45; kernel:src/process/core/table/thread_spawn.rs:49,59; kernel:src/interrupts/handlers/exceptions/page_fault.rs:51-53,74-80; kernel:src/memory/paging/manager/faults/demand_refuse.rs:23-51",
+  "cvss": "CVSS:4.0/AV:L/AC:L/AT:N/PR:L/UI:N/VC:N/VI:N/VA:L/SC:N/SI:N/SA:L",
+  "description": "A not-present page fault at a user address is answered with a zeroed, writable page up to a stated limit of 4096 pages (16 MiB), meant to bound a deliberate frame-exhaustion attempt by one process. The counter this limit is checked against is keyed by the id of the currently running task, and a thread created by MkThreadSpawn gets its own task id inside the same capsule. Each thread therefore gets its own 16 MiB allowance. When a thread's own counter is exceeded, the kernel ends that one thread; the capsule's other threads, including ones that already finished and freed their slot, are unaffected, and the pages a thread already filled stay mapped to the capsule after that thread ends.",
+  "impact": "The intended per-process bound on demand-filled memory does not hold for a multi-threaded capsule. Each page filled this way also costs one kernel heap record that is not released while the capsule runs (see the finding on heap record growth, NKA-2026-002). A capsule can reach the same machine-wide low-memory states that unbounded heap or frame growth reaches elsewhere, without ever being granted the Memory capability that a reader of the capability model would expect to gate this. In the deployed capsule set, the practical effect is limited because essentially every shipped capsule already holds Memory and MkMmap itself carries no quota, so this mainly matters for a capsule a system deliberately denies Memory, and for the assumption that ending a capsule at its budget removes the whole capsule rather than one thread of it.",
+  "scenario": [
+    "A capsule holding only IPC spawns a thread that writes one word to each of 4000 pages nobody mapped for it, then lets that thread park or exit.",
+    "It repeats this with a new thread each time; each thread adds up to 16 MiB that stays mapped to the capsule after the thread ends.",
+    "If a given thread does exceed its own 4096-page share, the kernel ends only that thread and prints that it did so; the capsule continues and starts the next thread at zero."
+  ],
+  "evidence": {
+    "reproduced": true,
+    "steps": [
+      "Reproduced on a booted development build under KVM (8 virtual CPUs, 8 GiB memory): a test capsule spawned nine threads, each demand-filling 4000 pages. Kernel-logged per-fault counters, not just the test's own counters, confirm 4000 pages filled for eight of the nine threads and exactly 4096 for the ninth, which the kernel ended at its own limit with the logged message naming that thread's id; the capsule's other threads and its leader continued running.",
+      "Total: 36,096 pages filled (about 141 MiB), 8.8 times the stated 4096-page limit, by one capsule that never held the Memory capability, in a single boot.",
+      "An independent check re-ran the core budget-charging logic in isolation, outside the full boot, and confirmed the same per-task, not per-capsule, accounting.",
+      "Not shown in this check: the same behavior in a capsule that was deliberately denied Memory in a real deployment; the machine reaching a true low-memory state by this route alone, which was not pushed that far; the 128-slot overflow-counter path that applies once many distinct task ids have been seen, which was examined in source only; the published release image specifically, rather than a development build of the same commit."
+    ]
+  },
+  "remediation": "Charge the demand-fault budget to the address space or thread group rather than to the individual task id, and end the whole group, not one thread, when it is spent. A stronger fix answers a not-present user fault only inside ranges the process explicitly reserved for lazy backing, which would also remove the need for this budget.",
+  "dates": {
+    "reported": "2026-11-24",
+    "published": "2026-11-24"
+  },
+  "status": "open"
+}

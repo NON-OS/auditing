@@ -1,0 +1,44 @@
+{
+  "id": "NKA-2026-050",
+  "title": "capsule_browser's HTML tree builder pops the open-element stack empty when the parser's depth cap evicts a table cell, and a later tag underflows and panics",
+  "component": "userland capsule_browser HTML parser, DOM tree builder",
+  "severity": "low",
+  "confidence": "confirmed",
+  "adversary": "A1",
+  "preconditions": [
+    "capsule_browser parses a hostile HTML document (a page the person browses to) or hostile markup passed to innerHTML from script",
+    "The document nests at least 248 elements before reaching a table cell, so the builder's fixed element-stack depth cap is hit while a cell is open"
+  ],
+  "affected": {
+    "release": true,
+    "main": false,
+    "commits": [
+      "b3dd1fa37ce2e32e3cb2f6a462081fefede4df40"
+    ]
+  },
+  "location": "kernel:userland/capsule_browser/src/browser/dom/builder/body/adopt.rs:26; kernel:userland/capsule_browser/src/browser/dom/builder/ops/insert.rs:37-39,63-74; kernel:userland/capsule_browser/src/browser/dom/builder/table/table_cell.rs:50-65; kernel:userland/capsule_browser/src/browser/dom/builder/ops/pop_until.rs:30-36; kernel:userland/capsule_browser/src/browser/dom/limits.rs:23",
+  "cvss": "CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:A/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N",
+  "description": "When the open-element stack reaches its 256-entry depth cap, inserting a new element first evicts the top of the stack to make room. Inside a table cell near the cap, this eviction can pop the implied table-row and cell elements without updating the parser's insertion mode, which still reports being inside a cell. A following end tag that targets the table body then runs the cell-close path, which pops every element on the stack looking for a table cell that is no longer there, removing the document's own root elements in the process. A subsequent anchor tag re-enters the active-formatting-element adoption routine, which assumes at least one element is on the stack; with the stack empty it computes a position one before the start and the subtraction overflows, aborting the parser.",
+  "impact": "A roughly 800-byte HTML document, or an equivalent string passed to innerJTML from script, aborts the browser capsule's parser. The abort is a checked-arithmetic panic in safe Rust, not memory corruption. Whether the capsule is isolated from the rest of the browser and automatically restarted after such a panic was not established in this check.",
+  "scenario": [
+    "A person browses to a page, or script running in the browser sets innerHTML, with content that nests around 249 ordinary elements and then opens a table, a cell, and a cell-closing sequence engineered to leave the stack empty before a final anchor tag.",
+    "The depth cap evicts the table context while the parser still believes a cell is open.",
+    "The end tag empties the stack; the following anchor tag reaches the adoption routine with nothing on the stack and the subtraction underflows, aborting the parser."
+  ],
+  "evidence": {
+    "reproduced": true,
+    "steps": [
+      "Found by an independent fuzzing pass over the parser crate, host-side, with four distinct crash inputs (2780-3583 bytes) all aborting at the same point.",
+      "A hand-built minimal input (783 bytes: one anchor tag, 249 nested elements, then a table/cell/anchor sequence designed to empty the stack) reproduces the same panic standalone, independent of the fuzzer's corpus.",
+      "The panic message and the call stack at the time of the abort were captured and match the traced cause exactly: the stack is empty (open.len() == 2, the single remaining entry below the point checked) when the adoption routine computes stack_position - 1.",
+      "With 240-247 nested elements instead of 249, the same input does not panic, confirming the cap boundary is the trigger.",
+      "Not established: whether other callers of the same stack-draining routine, reached by a different tag sequence after the same kind of eviction, panic the same way; the fragment-parsing entry point (used for a different caller) was exercised by the same fuzz target but not separately isolated."
+    ]
+  },
+  "remediation": "Do not let the depth-cap eviction remove table-context or table-cell elements out from under the insertion mode; either refuse the insert instead of evicting, or update the mode when the eviction removes a cell. Separately, bound every stack-draining loop (the table-cell close path among them) to stop at the document root, and guard the adoption routine's position arithmetic against an empty stack.",
+  "dates": {
+    "reported": "2026-11-24",
+    "published": "2026-11-24"
+  },
+  "status": "open"
+}

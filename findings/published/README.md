@@ -2,11 +2,17 @@
 
 Every finding of this audit is published here when it is confirmed, with its evidence, and updated when the maintainers fix it, accept the risk or dispute it. [docs/disclosure.md](../../docs/disclosure.md) has the rules.
 
-20 published: 20 open.
-By severity: 1 high, 1 medium, 8 low, 10 informational.
+26 published: 26 open.
+By severity: 1 high, 1 medium, 11 low, 13 informational.
 
 | ID | Title | Severity | Status | Published |
 |---|---|---|---|---|
+| [NKA-2026-055](NKA-2026-055.md) | The bootloader's formal proof of its TPM rollback-floor response handling checks the response for well-formedness but never asserts that a successful response code is actually required | informational | open | 2026-11-24 |
+| [NKA-2026-054](NKA-2026-054.md) | The bootloader's own dependency lockfile carries nine unsound-crate advisories and one yanked crate that the project's supply-chain gate never checks | informational | open | 2026-11-24 |
+| [NKA-2026-053](NKA-2026-053.md) | The repository's own static release-checks script fails at the release commit, and no CI workflow runs it | informational | open | 2026-11-24 |
+| [NKA-2026-052](NKA-2026-052.md) | The demand-paging budget is charged per thread rather than per capsule, so a capsule with multiple threads can demand-fill memory well past the stated limit without ever holding the Memory capability | low | open | 2026-11-24 |
+| [NKA-2026-051](NKA-2026-051.md) | MkCapsuleLoad copies up to five attacker-sized buffers into kernel memory before any check, and on one CPU this can hold the machine's only core for close to a second | low | open | 2026-11-24 |
+| [NKA-2026-050](NKA-2026-050.md) | capsule_browser's HTML tree builder pops the open-element stack empty when the parser's depth cap evicts a table cell, and a later tag underflows and panics | low | open | 2026-11-24 |
 | [NKA-2026-030](NKA-2026-030.md) | With no IOMMU unit in service, standard and server images let a claimed PCI device DMA to all RAM | informational | open | 2026-11-23 |
 | [NKA-2026-009](NKA-2026-009.md) | MkKill and MkExit end one task only: sibling threads of a killed capsule keep running with its capabilities and its parent cannot kill them | low | open | 2026-11-23 |
 | [NKA-2026-008](NKA-2026-008.md) | IPC TOTAL_BYTES_MAX (96 MiB) is not tied to free heap and one capsule can fill it using its own threads, refusing all IPC system-wide | medium | open | 2026-11-23 |
